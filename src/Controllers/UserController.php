@@ -8,7 +8,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function getAll($request, $response, $args)
+    public function index($request, $response, $args)
     {
         $users = User::all(['username', 'fullname', 'hospcode', 'position']);
         
@@ -19,10 +19,10 @@ class UserController extends Controller
                 ->write($data);
     }
     
-    public function getByUsername($request, $response, $args)
+    public function getUser($request, $response, $args)
     {
         $user = User::where('username', $args['username'])
-                    ->get(['username', 'fullname', 'hospcode', 'position'])
+                    ->get(['username', 'name', 'hospcode', 'position'])
                     ->first();
                     
         $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
