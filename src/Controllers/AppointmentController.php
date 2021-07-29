@@ -13,7 +13,16 @@ class AppointmentController extends Controller
 {
     public function getAll($request, $response, $args)
     {
-        $appointments = Appointment::all();
+        $appointments = Appointment::with(['patient' => function($q) {
+                            $q->select('hn', 'pname', 'fname', 'lname');
+                        }])
+                        ->with(['clinic' => function($q) {
+                            $q->select('id', 'clinic');
+                        }])
+                        ->with(['right' => function($q) {
+                            $q->select('id', 'right_name');
+                        }])
+                        ->get();
         
         $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
