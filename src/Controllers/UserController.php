@@ -8,7 +8,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function index($request, $response, $args)
+    public function getAll($request, $response, $args)
     {
         $users = User::all(['username', 'fullname', 'hospcode', 'position']);
         

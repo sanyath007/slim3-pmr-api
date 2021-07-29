@@ -105,6 +105,10 @@ $container['UserController'] = function($c) {
     return new App\Controllers\UserController($c);
 };
 
+$container['AppointmentController'] = function($c) {
+    return new App\Controllers\AppointmentController($c);
+};
+
 /** 
  * ============================================================
  * JWT middleware
