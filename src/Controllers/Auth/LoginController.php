@@ -32,6 +32,14 @@ class LoginController extends Controller
             $data = [
                 'token'         => $token,
                 'expires_at'    => $future->getTimeStamp(),
+                'user'          => [
+                    'username'  => $user->username,
+                    'email'  => $user->email,
+                    'fullname'  => $user->fullname,
+                    'position'  => $user->position,
+                    'hospcode'  => $user->hospcode,
+                    'role'      => count($user->permissions) > 0 ? $user->permissions[0] : null,
+                ]
             ];
 
             return $res->withStatus(201)

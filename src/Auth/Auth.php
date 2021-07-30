@@ -10,9 +10,7 @@ class Auth
 
     public function attempt($username, $password)
     {
-        $user = User::where('username', $username)
-                    ->get(['username', 'fullname', 'email', 'password'])
-                    ->first();
+        $user = User::where('username', $username)->first();
 
         if(!$user) {
             return false;
@@ -29,6 +27,10 @@ class Auth
 
     public function getUser()
     {
-        if($this->user) return $this->user;
+        if($this->user) {
+            return User::with('permissions', 'permissions.role')
+                    ->where('id', $this->user->id)
+                    ->first();
+        }
     }
 }
