@@ -14,7 +14,7 @@ class AppointmentController extends Controller
     public function getAll($request, $response, $args)
     {
         $appointments = Appointment::with(['patient' => function($q) {
-                            $q->select('hn', 'pname', 'fname', 'lname');
+                            $q->select('hn', 'pname', 'fname', 'lname', 'cid', 'tel1');
                         }])
                         ->with(['clinic' => function($q) {
                             $q->select('id', 'clinic');
