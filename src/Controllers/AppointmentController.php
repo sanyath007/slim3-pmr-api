@@ -8,6 +8,10 @@ use Respect\Validation\Validator as v;
 use App\Models\User;
 use App\Models\Patient;
 use App\Models\Appointment;
+use App\Models\Clinic;
+use App\Models\DiagGroup;
+use App\Models\ReferCause;
+use App\Models\Right;
 
 class AppointmentController extends Controller
 {
@@ -53,6 +57,20 @@ class AppointmentController extends Controller
                         ->first();
                     
         $data = json_encode($appointment, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
+    public function getInitForm($request, $response, $args)
+    {
+        $data = json_encode([
+            'clinics'       => Clinic::all(),
+            'diagGroups'    => DiagGroup::all(),
+            'referCauses'    => ReferCause::all(),
+            'rights'        => Right::all()
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
