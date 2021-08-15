@@ -80,12 +80,17 @@ class AppointmentController extends Controller
     public function store($request, $response, $args)
     {
         $this->validator->validate($request, [
-            'temp'      => v::numeric(),
-            'o2'        => v::numeric(),
-            'bps'       => v::numeric(),
-            'bpd'       => v::numeric(),
-            'pr'        => v::numeric(),
-            'detail'    => v::stringType()->notEmpty(),
+            'patient_hn'    => v::numeric(),
+            'cid'           => v::numeric(),
+            'pname'         => v::numeric(),
+            'fname'         => v::numeric(),
+            'lname'         => v::numeric(),
+            'appoint_date'  => v::stringType()->notEmpty(),
+            'appoint_time'  => v::stringType()->notEmpty(),
+            'clinic_id'     => v::stringType()->notEmpty(),
+            'diag_group'    => v::stringType()->notEmpty(),
+            'refer_no'      => v::stringType()->notEmpty(),
+            'refer_cause'   => v::stringType()->notEmpty(),
         ]);
 
         if ($this->validator->failed()) {
@@ -102,21 +107,34 @@ class AppointmentController extends Controller
         try {
             $post = (array)$request->getParsedBody();
 
-            $appointment = new Appointment;
-            $appointment->patient_hn = $post['patient_hn'];
-            $appointment->stat_date  = $post['stat_date'];
-            $appointment->stat_time  = $post['stat_time'];
-            // $appointment->weight  = $post['weight'];
-            // $appointment->height  = $post['height'];
-            $appointment->temp       = $post['temp'];
-            $appointment->o2         = $post['o2'];
-            $appointment->bps        = $post['bps'];
-            $appointment->bpd        = $post['bpd'];
-            $appointment->pr         = $post['pr'];
-            $appointment->detail     = $post['detail'];
-            $appointment->remark     = $post['remark'];
+            $patient = new Patient;
+            $patient->hn            = $post['patient_hn'];
+            $patient->cid           = $post['cid'];
+            $patient->passport      = $post['passport'];
+            $patient->pname         = $post['pname'];
+            $patient->fname         = $post['fname'];
+            $patient->lname         = $post['lname'];
+            $patient->sex           = $post['sex'];
+            $patient->birthdate     = $post['birthdate'];
+            $patient->tel1          = $post['tel1'];
+            $patient->tel2          = $post['tel2'];
+            $patient->tel2          = $post['tel2'];
+            $patient->right_main    = $post['patient_right'];
+            
+            if($patient->save()) {
+                $appointment = new Appointment;
+                $appointment->patient_hn    = $post['patient_hn'];
+                $appointment->appoint_date  = $post['appoint_date'];
+                $appointment->appoint_time  = $post['appoint_time'];
+                $appointment->appoint_type  = $post['appoint_type'];
+                $appointment->clinic_id     = $post['clinic_id'];
+                $appointment->doctor_id     = $post['doctor_id'];
+                $appointment->diag_group    = $post['diag_group'];
+                $appointment->diag_text     = $post['diag_text'];
+                $appointment->refer_no      = $post['refer_no'];
+                $appointment->refer_cause   = $post['refer_cause'];
+                $appointment->save();
 
-            if($appointment->save()) {
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
