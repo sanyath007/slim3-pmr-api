@@ -79,30 +79,30 @@ class AppointmentController extends Controller
 
     public function store($request, $response, $args)
     {
-        $this->validator->validate($request, [
-            'patient_hn'    => v::numeric(),
-            'cid'           => v::numeric(),
-            'pname'         => v::numeric(),
-            'fname'         => v::numeric(),
-            'lname'         => v::numeric(),
-            'appoint_date'  => v::stringType()->notEmpty(),
-            'appoint_time'  => v::stringType()->notEmpty(),
-            'clinic_id'     => v::stringType()->notEmpty(),
-            'diag_group'    => v::stringType()->notEmpty(),
-            'refer_no'      => v::stringType()->notEmpty(),
-            'refer_cause'   => v::stringType()->notEmpty(),
-        ]);
+        // $this->validator->validate($request, [
+        //     'patient_hn'    => v::numeric(),
+        //     'cid'           => v::numeric(),
+        //     'pname'         => v::numeric(),
+        //     'fname'         => v::numeric(),
+        //     'lname'         => v::numeric(),
+        //     'appoint_date'  => v::stringType()->notEmpty(),
+        //     'appoint_time'  => v::stringType()->notEmpty(),
+        //     'clinic_id'     => v::stringType()->notEmpty(),
+        //     'diag_group'    => v::stringType()->notEmpty(),
+        //     'refer_no'      => v::stringType()->notEmpty(),
+        //     'refer_cause'   => v::stringType()->notEmpty(),
+        // ]);
 
-        if ($this->validator->failed()) {
-            return $response
-                        ->withStatus(200)
-                        ->withHeader("Content-Type", "application/json")
-                        ->write(json_encode([
-                            'status' => 0,
-                            'message' => 'Data Invalid !!',
-                            'errors' => $this->validator->getMessages()
-                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
-        }
+        // if ($this->validator->failed()) {
+        //     return $response
+        //                 ->withStatus(200)
+        //                 ->withHeader("Content-Type", "application/json")
+        //                 ->write(json_encode([
+        //                     'status' => 0,
+        //                     'message' => 'Data Invalid !!',
+        //                     'errors' => $this->validator->getMessages()
+        //                 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        // }
 
         try {
             $post = (array)$request->getParsedBody();
@@ -119,16 +119,17 @@ class AppointmentController extends Controller
             $patient->tel1          = $post['tel1'];
             $patient->tel2          = $post['tel2'];
             $patient->tel2          = $post['tel2'];
-            $patient->right_main    = $post['patient_right'];
+            $patient->main_right    = $post['patient_right'];
             
             if($patient->save()) {
                 $appointment = new Appointment;
                 $appointment->patient_hn    = $post['patient_hn'];
+                $appointment->patient_right = $post['patient_right'];
                 $appointment->appoint_date  = $post['appoint_date'];
                 $appointment->appoint_time  = $post['appoint_time'];
                 $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic_id     = $post['clinic_id'];
-                $appointment->doctor_id     = $post['doctor_id'];
+                $appointment->clinic        = $post['clinic_id'];
+                $appointment->doctor        = $post['doctor_id'];
                 $appointment->diag_group    = $post['diag_group'];
                 $appointment->diag_text     = $post['diag_text'];
                 $appointment->refer_no      = $post['refer_no'];
