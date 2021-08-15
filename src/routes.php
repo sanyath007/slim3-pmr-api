@@ -1,6 +1,5 @@
 <?php
 
-
 /** For request options http method */
 $app->options('/{routes:.+}', function($request, $response, $args) {
     return $response;
@@ -19,8 +18,8 @@ $app->group('/api', function(Slim\App $app) {
     $app->get('/appointments/{id}', 'AppointmentController:getById');
     $app->get('/appointments/init/form', 'AppointmentController:getInitForm');
     $app->post('/appointments/store', 'AppointmentController:store');
-    $app->put('/appointments/update', 'AppointmentController:update');
-    $app->delete('/appointments/delete', 'AppointmentController:delete');
+    $app->put('/appointments/{id}', 'AppointmentController:update');
+    $app->delete('/appointments/{id}', 'AppointmentController:delete');
 });
 /** =============== ROUTES =============== */
 
