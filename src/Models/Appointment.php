@@ -12,17 +12,27 @@ class Appointment extends Model
     {
         return $this->belongsTo(Patient::class, 'patient_hn', 'hn');
     }
-    
+
     public function clinic()
     {
-        return $this->belongsTo(Clinic::class, 'clinic_id', 'id');
+        return $this->belongsTo(Clinic::class, 'clinic', 'id');
     }
-    
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor', 'id');
+    }
+
+    public function diag()
+    {
+        return $this->belongsTo(DiagGroup::class, 'diag_group', 'id');
+    }
+
     public function right()
     {
         return $this->belongsTo(Right::class, 'patient_right', 'id');
     }
-    
+
     public function patients()
     {
         return $this->hasMany(Patient::class, 'hn', 'patient_hn');

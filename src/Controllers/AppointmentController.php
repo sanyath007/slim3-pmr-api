@@ -21,7 +21,10 @@ class AppointmentController extends Controller
                             $q->select('hn', 'pname', 'fname', 'lname', 'cid', 'tel1');
                         }])
                         ->with(['clinic' => function($q) {
-                            $q->select('id', 'clinic');
+                            $q->select('id', 'clinic_name');
+                        }])
+                        ->with(['diag' => function($q) {
+                            $q->select('id', 'name');
                         }])
                         ->with(['right' => function($q) {
                             $q->select('id', 'right_name');

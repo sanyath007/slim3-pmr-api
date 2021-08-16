@@ -10,6 +10,6 @@ class Clinic extends Model
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class, 'id', 'clinic_id');
+        return $this->hasMany(Appointment::class, 'id', 'clinic');
     }
 }
