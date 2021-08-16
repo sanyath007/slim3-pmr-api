@@ -26,8 +26,8 @@ class AppointmentController extends Controller
                         ->with(['right' => function($q) {
                             $q->select('id', 'right_name');
                         }])
+                        ->orderBy('appoint_date')
                         ->get();
-        
         $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
@@ -49,13 +49,13 @@ class AppointmentController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
     public function getById($request, $response, $args)
     {
         $appointment    = Appointment::with('right', 'blood_group', 'drug_allergies')
                         ->where('hn', $args['hn'])
                         ->first();
-                    
+
         $data = json_encode($appointment, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
