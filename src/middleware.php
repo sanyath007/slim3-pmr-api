@@ -117,6 +117,7 @@ $container['AppointmentController'] = function($c) {
 $app->add(new Slim\Middleware\JwtAuthentication([
     "path"          => '/api',
     "logger"        => $container['logger'],
+    "secure"        => false,
     "passthrough"   => ["/test"],
     "secret"        => getenv("JWT_SECRET"),
     "callback"      => function($req, $res, $args) use ($container) {
