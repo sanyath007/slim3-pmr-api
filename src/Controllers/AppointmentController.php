@@ -145,12 +145,15 @@ class AppointmentController extends Controller
                 $appointment->appoint_date  = $post['appoint_date'];
                 $appointment->appoint_time  = $post['appoint_time'];
                 $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic        = $post['clinic_id'];
-                $appointment->doctor        = $post['doctor_id'];
+                $appointment->clinic        = $post['clinic'];
+                $appointment->doctor        = $post['doctor'];
                 $appointment->diag_group    = $post['diag_group'];
                 $appointment->diag_text     = $post['diag_text'];
                 $appointment->refer_no      = $post['refer_no'];
                 $appointment->refer_cause   = $post['refer_cause'];
+                $appointment->hospcode      = $post['hospcode'];
+                $appointment->appoint_user  = $post['user'];
+                $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
                 $appointment->save();
 
                 return $response
