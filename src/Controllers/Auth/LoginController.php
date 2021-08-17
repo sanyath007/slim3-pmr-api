@@ -33,6 +33,7 @@ class LoginController extends Controller
                 'token'         => $token,
                 'expires_at'    => $future->getTimeStamp(),
                 'user'          => [
+                    'user_id'       => $user->id,
                     'username'      => $user->username,
                     'email'         => $user->email,
                     'fullname'      => $user->fullname,
