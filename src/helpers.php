@@ -75,3 +75,10 @@ function uploadImage($img, $img_url)
 
     return '';
 }
+
+function thdateToDbdate($str)
+{
+    $arrDate = explode('-', $str);
+
+    return $arrDate[2]. '-' .$arrDate[1]. '-' .$arrDate[0];
+}

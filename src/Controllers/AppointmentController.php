@@ -132,7 +132,7 @@ class AppointmentController extends Controller
             $patient->fname         = $post['fname'];
             $patient->lname         = $post['lname'];
             $patient->sex           = $post['sex'];
-            $patient->birthdate     = $post['birthdate'];
+            $patient->birthdate     = thdateToDbdate($post['birthdate']);
             $patient->tel1          = $post['tel1'];
             $patient->tel2          = $post['tel2'];
             $patient->tel2          = $post['tel2'];
