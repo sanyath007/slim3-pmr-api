@@ -16,6 +16,7 @@ $app->group('/api', function(Slim\App $app) {
     
     $app->get('/appointments', 'AppointmentController:getAll');
     $app->get('/appointments/{id}', 'AppointmentController:getById');
+    $app->get('/appointments/{date}/count', 'AppointmentController:getCountByDate');
     $app->get('/appointments/init/form', 'AppointmentController:getInitForm');
     $app->post('/appointments', 'AppointmentController:store');
     $app->put('/appointments/{id}', 'AppointmentController:update');

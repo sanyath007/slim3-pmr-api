@@ -37,7 +37,20 @@ class AppointmentController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
+    public function getById($request, $response, $args)
+    {
+        $appointment    = Appointment::with('right', 'blood_group', 'drug_allergies')
+                        ->where('hn', $args['hn'])
+                        ->first();
+
+        $data = json_encode($appointment, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
     public function getAppointmentsByPatient($request, $response, $args)
     {
         $page = (int)$request->getQueryParam('page');
@@ -53,13 +66,14 @@ class AppointmentController extends Controller
                 ->write($data);
     }
 
-    public function getById($request, $response, $args)
+    public function getCountByDate($request, $response, $args)
     {
-        $appointment    = Appointment::with('right', 'blood_group', 'drug_allergies')
-                        ->where('hn', $args['hn'])
-                        ->first();
-
-        $data = json_encode($appointment, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        $sql = "SELECT appoint_date, COUNT(id) AS num
+                FROM appointments 
+                GROUP BY appoint_date 
+                ORDER BY appoint_date";
+        $appointments = DB::select($sql);
+        $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
