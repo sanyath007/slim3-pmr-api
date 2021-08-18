@@ -21,8 +21,7 @@ class PatientController extends Controller
     public function getAll($request, $response, $args)
     {
         $page = (int)$request->getQueryParam('page');
-        $model = Patient::with('health_stats')->orderBy('hn');
-        $patients = paginate($model, 10, $page, $request);
+        $patients = Patient::orderBy('hn')->get();
         
         $data = json_encode($patients, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -31,7 +30,7 @@ class PatientController extends Controller
                 ->write($data);
     }
     
-    public function getByHn($request, $response, $args)
+    public function getById($request, $response, $args)
     {
         $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
                         ->where('hn', $args['hn'])

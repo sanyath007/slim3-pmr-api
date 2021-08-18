@@ -21,6 +21,9 @@ $app->group('/api', function(Slim\App $app) {
     $app->post('/appointments', 'AppointmentController:store');
     $app->put('/appointments/{id}', 'AppointmentController:update');
     $app->delete('/appointments/{id}', 'AppointmentController:delete');
+
+    $app->get('/patients', 'PatientController:getAll');
+    $app->get('/patients/{hn}', 'PatientController:getById');
 });
 /** =============== ROUTES =============== */
 
