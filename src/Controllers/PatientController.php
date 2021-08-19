@@ -43,6 +43,11 @@ class PatientController extends Controller
                 ->write($data);
     }
     
+    public function generateId($request, $response, $args)
+    {
+        echo Uuid::uuid4();
+    }
+
     public function getProfile($request, $response, $args)
     {
         $patient    = Patient::with('right', 'blood_group', 'drug_allergies')

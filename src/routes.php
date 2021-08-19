@@ -24,6 +24,7 @@ $app->group('/api', function(Slim\App $app) {
 
     $app->get('/patients', 'PatientController:getAll');
     $app->get('/patients/{id}', 'PatientController:getById');
+    $app->get('/patients/id/gen', 'PatientController:generateId');
 });
 /** =============== ROUTES =============== */
 
