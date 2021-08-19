@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Controllers\Controller;
 use Illuminate\Database\Capsule\Manager as DB;
 use Respect\Validation\Validator as v;
+use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Models\Patient;
 use App\Models\Appointment;
@@ -153,6 +154,7 @@ class AppointmentController extends Controller
             }
 
             $patient = new Patient;
+            $patient->id            = Uuid::uuid4();
             $patient->hn            = $post['patient_hn'];
             $patient->cid           = $post['cid'];
             $patient->passport      = $post['passport'];
