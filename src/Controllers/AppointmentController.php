@@ -125,9 +125,9 @@ class AppointmentController extends Controller
         try {
             $post = (array)$request->getParsedBody();
 
-            if ($post['is_existed']) {
+            if (empty($post['patient_id'])) {
                 $appointment = new Appointment;
-                $appointment->patient_hn    = $post['patient_hn'];
+                $appointment->patient       = $post['patient_id'];
                 $appointment->patient_right = $post['patient_right'];
                 $appointment->appoint_date  = $post['appoint_date'];
                 $appointment->appoint_time  = $post['appoint_time'];
@@ -170,7 +170,7 @@ class AppointmentController extends Controller
             
             if($patient->save()) {
                 $appointment = new Appointment;
-                $appointment->patient_hn    = $post['patient_hn'];
+                $appointment->patient       = $patient->id;
                 $appointment->patient_right = $post['patient_right'];
                 $appointment->appoint_date  = $post['appoint_date'];
                 $appointment->appoint_time  = $post['appoint_time'];
