@@ -33,7 +33,7 @@ class PatientController extends Controller
     public function getById($request, $response, $args)
     {
         $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
-                        ->where('hn', $args['hn'])
+                        ->where('id', $args['id'])
                         ->first();
                     
         $data = json_encode($patient, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);

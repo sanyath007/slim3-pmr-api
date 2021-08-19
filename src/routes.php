@@ -23,7 +23,7 @@ $app->group('/api', function(Slim\App $app) {
     $app->delete('/appointments/{id}', 'AppointmentController:delete');
 
     $app->get('/patients', 'PatientController:getAll');
-    $app->get('/patients/{hn}', 'PatientController:getById');
+    $app->get('/patients/{id}', 'PatientController:getById');
 });
 /** =============== ROUTES =============== */
 
