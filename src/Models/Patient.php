@@ -18,13 +18,13 @@ class Patient extends Model
         return $this->belongsTo(BloodGroup::class, 'blood_group', 'blood_id');
     }
     
-    public function drug_allergies()
-    {
-        return $this->hasMany(DrugAllergy::class, 'patient_hn', 'hn');
-    }
+    // public function drug_allergies()
+    // {
+    //     return $this->hasMany(DrugAllergy::class, 'patient_hn', 'hn');
+    // }
 
-    public function health_stats()
+    public function appointments()
     {
-        return $this->hasMany(HealthStat::class, 'patient_hn', 'hn');
+        return $this->hasMany(Appointment::class, 'patient', 'id');
     }
 }

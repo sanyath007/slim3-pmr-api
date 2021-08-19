@@ -10,7 +10,7 @@ class Appointment extends Model
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patient_hn', 'hn');
+        return $this->belongsTo(Patient::class, 'patient', 'id');
     }
 
     public function clinic()

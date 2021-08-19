@@ -19,7 +19,7 @@ class AppointmentController extends Controller
     public function getAll($request, $response, $args)
     {
         $appointments = Appointment::with(['patient' => function($q) {
-                            $q->select('hn', 'pname', 'fname', 'lname', 'cid', 'tel1');
+                            $q->select('id','hn','pname','fname','lname','cid','tel1');
                         }])
                         ->with(['clinic' => function($q) {
                             $q->select('id', 'clinic_name');
@@ -125,7 +125,7 @@ class AppointmentController extends Controller
         try {
             $post = (array)$request->getParsedBody();
 
-            if (empty($post['patient_id'])) {
+            if (!empty($post['patient_id'])) {
                 $appointment = new Appointment;
                 $appointment->patient       = $post['patient_id'];
                 $appointment->patient_right = $post['patient_right'];
@@ -154,7 +154,6 @@ class AppointmentController extends Controller
             }
 
             $patient = new Patient;
-            $patient->id            = Uuid::uuid4();
             $patient->hn            = $post['patient_hn'];
             $patient->cid           = $post['cid'];
             $patient->passport      = $post['passport'];
