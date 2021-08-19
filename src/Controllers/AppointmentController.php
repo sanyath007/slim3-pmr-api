@@ -129,7 +129,7 @@ class AppointmentController extends Controller
                 $appointment = new Appointment;
                 $appointment->patient       = $post['patient_id'];
                 $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = $post['appoint_date'];
+                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
                 $appointment->appoint_time  = $post['appoint_time'];
                 $appointment->appoint_type  = $post['appoint_type'];
                 $appointment->clinic        = $post['clinic'];
@@ -171,7 +171,7 @@ class AppointmentController extends Controller
                 $appointment = new Appointment;
                 $appointment->patient       = $patient->id;
                 $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = $post['appoint_date'];
+                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
                 $appointment->appoint_time  = $post['appoint_time'];
                 $appointment->appoint_type  = $post['appoint_type'];
                 $appointment->clinic        = $post['clinic'];
