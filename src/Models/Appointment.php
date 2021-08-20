@@ -28,6 +28,11 @@ class Appointment extends Model
         return $this->belongsTo(DiagGroup::class, 'diag_group', 'id');
     }
 
+    public function referCause()
+    {
+        return $this->belongsTo(ReferCause::class, 'refer_cause', 'id');
+    }
+
     public function right()
     {
         return $this->belongsTo(Right::class, 'patient_right', 'id');

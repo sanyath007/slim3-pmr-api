@@ -41,9 +41,23 @@ class AppointmentController extends Controller
 
     public function getById($request, $response, $args)
     {
-        $appointment    = Appointment::with('right', 'blood_group', 'drug_allergies')
-                        ->where('hn', $args['hn'])
-                        ->first();
+        $appointment    = Appointment::with(['patient' => function($q) {
+                                $q->select('id','hn','pname','fname','lname','cid','tel1','sex','birthdate');
+                            }])
+                            ->with(['clinic' => function($q) {
+                                $q->select('id', 'clinic_name');
+                            }])
+                            ->with(['diag' => function($q) {
+                                $q->select('id', 'name');
+                            }])
+                            ->with(['right' => function($q) {
+                                $q->select('id', 'right_name');
+                            }])
+                            ->with(['referCause' => function($q) {
+                                $q->select('id', 'name');
+                            }])
+                            ->where('id', $args['id'])
+                            ->first();
 
         $data = json_encode($appointment, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
