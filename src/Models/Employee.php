@@ -12,4 +12,14 @@ class Employee extends Model
     {
         return $this->belongsTo(Position::class, 'position', 'id');
     }
+
+    public function positionClass()
+    {
+        return $this->belongsTo(PositionClass::class, 'position_class', 'id');
+    }
+
+    public function positionType()
+    {
+        return $this->belongsTo(PositionType::class, 'position_type', 'id');
+    }
 }
