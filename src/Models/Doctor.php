@@ -22,4 +22,9 @@ class Doctor extends Model
     {
         return $this->belongsTo(Department::class, 'depart', 'id');
     }
+
+    public function specialists()
+    {
+        return $this->hasMany(DoctorSpecialist::class, 'id', 'doctor');
+    }
 }
