@@ -6,6 +6,11 @@ use App\Controllers\Controller;
 use Illuminate\Database\Capsule\Manager as DB;
 use App\Models\Doctor;
 use App\Models\Employee;
+use App\Models\Position;
+use App\Models\PositionType;
+use App\Models\PositionClass;
+use App\Models\Department;
+use App\Models\Specialist;
 
 class DoctorController extends Controller
 {
@@ -22,7 +27,7 @@ class DoctorController extends Controller
                 ->write($data);
     }
     
-    public function getUser($request, $response, $args)
+    public function getById($request, $response, $args)
     {
         $doctor = Doctor::where('emp_id', $args['id'])
                     ->with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
@@ -30,6 +35,21 @@ class DoctorController extends Controller
                     ->first();
                     
         $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
+    public function getInitForm($request, $response, $args)
+    {
+        $data = json_encode([
+            'positions'       => Position::all(),
+            'positionClasses' => PositionClass::all(),
+            'positionTypes'   => PositionType::all(),
+            'departs'         => Department::all(),
+            'specialists'     => Specialist::all()
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
@@ -58,6 +78,12 @@ class DoctorController extends Controller
             $doctor->license_renewal_date   = $post['license_renewal_date'];
             $doctor->depart                 = $post['depart'];
             $doctor->save();
+
+            /** Update doctor specialist table */
+            $specialist = DoctorSpecialist::create([
+                'doctor_id'     => $employee->id,
+                'specialist'    => $post['specialist'],
+            ]);
 
             $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -90,7 +116,12 @@ class DoctorController extends Controller
             $doctor->license_renewal_date   = $post['license_renewal_date'];
             $doctor->depart                 = $post['depart'];
             $doctor->save();
-            
+
+            /** Update doctor specialist table */
+            $specialist = DoctorSpecialist::create([
+                'id'    => ''
+            ]);
+
             $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
             return $response->withStatus(200)
