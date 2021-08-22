@@ -18,7 +18,7 @@ class DoctorController extends Controller
     public function getAll($request, $response, $args)
     {
         $doctors = Doctor::with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
-                    ->with('depart')
+                    ->with('depart', 'specialists', 'specialists.specialist')
                     ->get();
         
         $data = json_encode($doctors, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
@@ -32,7 +32,7 @@ class DoctorController extends Controller
     {
         $doctor = Doctor::where('emp_id', $args['id'])
                     ->with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
-                    ->with('depart')
+                    ->with('depart', 'specialists', 'specialists.specialist')
                     ->first();
                     
         $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);

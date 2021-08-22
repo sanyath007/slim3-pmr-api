@@ -10,7 +10,7 @@ class Doctor extends Model
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class, 'id', 'doctor');
+        return $this->hasMany(Appointment::class, 'doctor', 'emp_id');
     }
 
     public function employee()
@@ -25,6 +25,6 @@ class Doctor extends Model
 
     public function specialists()
     {
-        return $this->hasMany(DoctorSpecialist::class, 'id', 'doctor');
+        return $this->hasMany(DoctorSpecialist::class, 'doctor', 'emp_id');
     }
 }
