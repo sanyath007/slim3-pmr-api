@@ -15,6 +15,11 @@ class Doctor extends Model
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class, 'emp_id', 'id');
+        return $this->hasOne(Employee::class, 'emp_id', 'id');
+    }
+
+    public function depart()
+    {
+        return $this->belongsTo(Department::class, 'depart', 'id');
     }
 }
