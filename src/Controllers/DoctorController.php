@@ -6,6 +6,7 @@ use App\Controllers\Controller;
 use Illuminate\Database\Capsule\Manager as DB;
 use App\Models\Doctor;
 use App\Models\Employee;
+use App\Models\DoctorSpecialist;
 use App\Models\Position;
 use App\Models\PositionType;
 use App\Models\PositionClass;
@@ -60,15 +61,17 @@ class DoctorController extends Controller
     {
         $post = (array)$request->getParsedBody();
         $employee = new Employee;
-        $employee->cid          = $post['cid'];
-        $employee->patient_hn   = $post['patient_hn'];
-        $employee->prefix       = $post['prefix'];
-        $employee->fname        = $post['fname'];
-        $employee->lname        = $post['lname'];
-        $employee->sex          = $post['sex'];
-        $employee->birthdate    = $post['birthdate'];
-        $employee->position     = $post['position'];
-        $employee->start_date   = $post['start_date'];
+        $employee->cid              = $post['cid'];
+        $employee->patient_hn       = $post['patient_hn'];
+        $employee->prefix           = $post['prefix'];
+        $employee->fname            = $post['fname'];
+        $employee->lname            = $post['lname'];
+        $employee->sex              = $post['sex'];
+        $employee->birthdate        = $post['birthdate'];
+        $employee->position         = $post['position'];
+        $employee->position_class   = $post['position_class'];
+        $employee->position_type    = $post['position_type'];
+        $employee->start_date       = $post['start_date'];
 
         if ($employee->save()) {
             $doctor = new Doctor;
@@ -81,10 +84,10 @@ class DoctorController extends Controller
             $doctor->save();
 
             /** Update doctor specialist table */
-            $specialist = DoctorSpecialist::create([
-                'doctor_id'     => $employee->id,
-                'specialist'    => $post['specialist'],
-            ]);
+            $specialist = new DoctorSpecialist;
+            $specialist->doctor     = $employee->id;
+            $specialist->specialist    = $post['specialist'];
+            $specialist->save();
 
             $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -100,15 +103,17 @@ class DoctorController extends Controller
     {
         $post = (array)$request->getParsedBody();
         $employee = Employee::find($args['id']);
-        $employee->cid          = $post['cid'];
-        $employee->patient_hn   = $post['patient_hn'];
-        $employee->prefix       = $post['prefix'];
-        $employee->fname        = $post['fname'];
-        $employee->lname        = $post['lname'];
-        $employee->sex          = $post['sex'];
-        $employee->birthdate    = $post['birthdate'];
-        $employee->position     = $post['position'];
-        $employee->start_date   = $post['start_date'];
+        $employee->cid              = $post['cid'];
+        $employee->patient_hn       = $post['patient_hn'];
+        $employee->prefix           = $post['prefix'];
+        $employee->fname            = $post['fname'];
+        $employee->lname            = $post['lname'];
+        $employee->sex              = $post['sex'];
+        $employee->birthdate        = $post['birthdate'];
+        $employee->position         = $post['position'];
+        $employee->position_class   = $post['position_class'];
+        $employee->position_type    = $post['position_type'];
+        $employee->start_date       = $post['start_date'];
 
         if ($employee->save()) {
             $doctor = Doctor::where('emp_id', $args['id']);
