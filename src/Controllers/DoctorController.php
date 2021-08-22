@@ -77,6 +77,7 @@ class DoctorController extends Controller
             $doctor->license_no             = $post['license_no'];
             $doctor->license_renewal_date   = $post['license_renewal_date'];
             $doctor->depart                 = $post['depart'];
+            $doctor->remark                 = $post['remark'];
             $doctor->save();
 
             /** Update doctor specialist table */
@@ -115,12 +116,10 @@ class DoctorController extends Controller
             $doctor->license_no             = $post['license_no'];
             $doctor->license_renewal_date   = $post['license_renewal_date'];
             $doctor->depart                 = $post['depart'];
+            $doctor->remark                 = $post['remark'];
             $doctor->save();
 
             /** Update doctor specialist table */
-            $specialist = DoctorSpecialist::create([
-                'id'    => ''
-            ]);
 
             $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
