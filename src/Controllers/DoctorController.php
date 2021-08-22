@@ -11,7 +11,7 @@ class DoctorController extends Controller
 {
     public function getAll($request, $response, $args)
     {
-        $doctors = Doctor::with('employee', 'employee.position')
+        $doctors = Doctor::with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
                     ->with('depart')
                     ->get();
         
@@ -25,7 +25,7 @@ class DoctorController extends Controller
     public function getUser($request, $response, $args)
     {
         $doctor = Doctor::where('emp_id', $args['id'])
-                    ->with('employee', 'employee.position')
+                    ->with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
                     ->with('depart')
                     ->first();
                     
@@ -103,6 +103,6 @@ class DoctorController extends Controller
 
     public function delete()
     {
-        
+
     }
 }
