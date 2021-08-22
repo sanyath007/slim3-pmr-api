@@ -105,6 +105,10 @@ $container['UserController'] = function($c) {
     return new App\Controllers\UserController($c);
 };
 
+$container['DoctorController'] = function($c) {
+    return new App\Controllers\DoctorController($c);
+};
+
 $container['AppointmentController'] = function($c) {
     return new App\Controllers\AppointmentController($c);
 };
