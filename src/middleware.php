@@ -117,6 +117,10 @@ $container['PatientController'] = function($c) {
     return new App\Controllers\PatientController($c);
 };
 
+$container['DepartmentController'] = function($c) {
+    return new App\Controllers\DepartmentController($c);
+};
+
 /** 
  * ============================================================
  * JWT middleware
