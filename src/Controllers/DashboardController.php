@@ -16,9 +16,7 @@ class DashboardController extends Controller
             FROM appointment_online_db.appointments
             WHERE (appoint_date between '2021-08-01' and '2021-08-31') ";
 
-        return $res->withJson(
-            DB::select($sql, [$args['date']])
-        );
+        return $res->withJson(DB::select($sql, [$args['date']]));
     }
 
     public function getAppointPerDay($req, $res, $args)
@@ -31,9 +29,7 @@ class DashboardController extends Controller
                 GROUP BY CAST(DAY(appoint_date) AS SIGNED) 
                 ORDER BY CAST(DAY(appoint_date) AS SIGNED);";
 
-        return $res->withJson(
-            DB::select($sql, [$sdate, $edate])
-        );
+        return $res->withJson(DB::select($sql, [$sdate, $edate]));
     }
 
     public function getAppointByClinic($req, $res, $args)
@@ -48,9 +44,7 @@ class DashboardController extends Controller
                 group by a.clinic, cl.clinic_name
                 order by a.clinic;";
 
-        return $res->withJson(
-            DB::select($sql, [$sdate, $edate])
-        );
+        return $res->withJson(DB::select($sql, [$sdate, $edate]));
     }
 
     public function opVisitTypeDay($req, $res, $args)
@@ -74,9 +68,7 @@ class DashboardController extends Controller
                 WHEN (o.ovstist IN ('08', '09', '10')) THEN 'EMS'
             END ";
 
-        return $res->withJson(
-            DB::select($sql, [$args['date']])
-        );
+        return $res->withJson(DB::select($sql, [$args['date']]));
     }
 
     public function ipClassYear($req, $res, $args)
@@ -95,8 +87,6 @@ class DashboardController extends Controller
             LEFT JOIN ward w ON (ip.ward=w.ward)
             WHERE (ip.dchdate BETWEEN ? AND ?) ";
 
-        return $res->withJson(
-            DB::select($sql, [$sdate, $edate])
-        );
+        return $res->withJson(DB::select($sql, [$sdate, $edate]));
     }
 }
