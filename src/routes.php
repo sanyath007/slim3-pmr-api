@@ -10,7 +10,7 @@ $app->get('/', 'HomeController:home')->setName('home');
 
 $app->post('/login', 'LoginController:login')->setName('login');
 
-$app->group('/api', function(Slim\App $app) { 
+$app->group('/api', function(Slim\App $app) {
     $app->get('/users', 'UserController:getAll');
     $app->get('/users/{username}', 'UserController:getUser');
     
@@ -34,6 +34,10 @@ $app->group('/api', function(Slim\App $app) {
     $app->post('/doctors', 'DoctorController:store');
     $app->put('/doctors/{id}', 'DoctorController:update');
     $app->delete('/doctors/{id}', 'DoctorController:delete');
+
+    $app->get('/dashboard/{month}/stat-card', 'DashboardController:getStatCard');
+    $app->get('/dashboard/{month}/appoint-day', 'DashboardController:getAppointPerDay');
+    $app->get('/dashboard/{month}/appoint-by-clinic', 'DashboardController:getAppointByClinic');
 });
 /** =============== ROUTES =============== */
 

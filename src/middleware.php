@@ -121,6 +121,10 @@ $container['DepartmentController'] = function($c) {
     return new App\Controllers\DepartmentController($c);
 };
 
+$container['DashboardController'] = function($c) {
+    return new App\Controllers\DashboardController($c);
+};
+
 /** 
  * ============================================================
  * JWT middleware
