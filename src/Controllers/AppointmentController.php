@@ -136,6 +136,7 @@ class AppointmentController extends Controller
         //                 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
         // }
 
+        // TODO: should check duplicated patient data before store to db
         try {
             $post = (array)$request->getParsedBody();
 

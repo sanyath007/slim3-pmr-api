@@ -8,15 +8,18 @@ use Illuminate\Database\Capsule\Manager as DB;
 class DashboardController extends Controller
 {
     public function getStatCard($req, $res, $args)
-    {       
+    {
+        $sdate = $args['month']. '-01';
+        $edate = $args['month']. '-31';
+
         $sql="SELECT count(id) as totalcase,
             count(case when (patient in (
                 select id from appointment_online_db.patients where date(created_at) between '2021-08-01' and '2021-08-31')
             ) then id end) as newcase
             FROM appointment_online_db.appointments
-            WHERE (appoint_date between '2021-08-01' and '2021-08-31') ";
+            WHERE (appoint_date between ? and ?) ";
 
-        return $res->withJson(DB::select($sql, [$args['date']]));
+        return $res->withJson(collect(DB::select($sql, [$sdate, $edate]))->first());
     }
 
     public function getAppointPerDay($req, $res, $args)
