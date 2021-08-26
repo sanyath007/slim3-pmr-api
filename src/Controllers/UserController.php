@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function getAll($request, $response, $args)
     {
-        $users = User::all(['username', 'fullname', 'hospcode', 'position']);
+        $users = User::all(['username', 'email', 'fullname', 'hospcode', 'position']);
         
         $data = json_encode($users, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
