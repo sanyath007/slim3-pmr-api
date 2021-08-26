@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $sdate = $args['month']. '-01';
         $edate = $args['month']. '-31';
 
-        $sql="SELECT cl.clinic_name, (a.id) as amt
+        $sql="SELECT cl.clinic_name, count(a.id) as amt
                 FROM appointment_online_db.appointments a
                 left join appointment_online_db.clinics cl on (a.clinic=cl.id)
                 WHERE (a.appoint_date between ? and ?)
