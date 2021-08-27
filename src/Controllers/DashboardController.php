@@ -14,7 +14,7 @@ class DashboardController extends Controller
 
         $sqlCount = "SELECT COUNT(id) as totalcase,
                 COUNT(case when (patient in (
-                    select id from appointment_online_db.patients where date(created_at) between '$sdate' and '$sdate')
+                    select id from appointment_online_db.patients where date(created_at) between ? and ?)
                 ) then id end) as newcase
                 FROM appointment_online_db.appointments
                 WHERE (appoint_date between ? and ?) ";
@@ -26,7 +26,7 @@ class DashboardController extends Controller
                 ORDER BY count(id) desc LIMIT 1;";
 
         return $res->withJson([
-            'count' => collect(DB::select($sqlCount, [$sdate, $edate]))->first(),
+            'count' => collect(DB::select($sqlCount, [$sdate, $edate, $sdate, $edate]))->first(),
             'max' => collect(DB::select($sqlMax, [$sdate, $edate]))->first()
         ]);
     }
