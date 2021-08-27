@@ -20,7 +20,7 @@ class Appointment extends Model
 
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'doctor', 'id');
+        return $this->belongsTo(Doctor::class, 'doctor', 'emp_id');
     }
 
     public function diag()
@@ -41,5 +41,10 @@ class Appointment extends Model
     public function patients()
     {
         return $this->hasMany(Patient::class, 'hn', 'patient_hn');
+    }
+
+    public function hosp()
+    {
+        return $this->belongsTo(Hospcode::class, 'hospcode', 'hospcode');
     }
 }

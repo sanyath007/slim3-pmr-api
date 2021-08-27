@@ -10,9 +10,6 @@ $app->get('/', 'HomeController:home')->setName('home');
 
 $app->post('/login', 'LoginController:login')->setName('login');
 
-// TODO: to complete this method
-$app->get('/appointments/{id}/print', 'AppointmentController:getPdf');
-
 $app->group('/api', function(Slim\App $app) {
     $app->get('/users', 'UserController:getAll');
     $app->get('/users/{username}', 'UserController:getUser');

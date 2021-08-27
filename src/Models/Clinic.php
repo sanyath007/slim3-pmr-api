@@ -8,6 +8,11 @@ class Clinic extends Model
 {
     protected $table = "clinics";
 
+    public function room()
+    {
+        return $this->belongsTo(Room::class, 'room_id', 'id');
+    }
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class, 'id', 'clinic');
