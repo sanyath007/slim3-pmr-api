@@ -12,14 +12,23 @@ class DashboardController extends Controller
         $sdate = $args['month']. '-01';
         $edate = $args['month']. '-31';
 
-        $sql="SELECT count(id) as totalcase,
-            count(case when (patient in (
-                select id from appointment_online_db.patients where date(created_at) between '2021-08-01' and '2021-08-31')
-            ) then id end) as newcase
-            FROM appointment_online_db.appointments
-            WHERE (appoint_date between ? and ?) ";
+        $sqlCount = "SELECT COUNT(id) as totalcase,
+                COUNT(case when (patient in (
+                    select id from appointment_online_db.patients where date(created_at) between '$sdate' and '$sdate')
+                ) then id end) as newcase
+                FROM appointment_online_db.appointments
+                WHERE (appoint_date between ? and ?) ";
+        
+        $sqlMax = "SELECT appoint_date, COUNT(id) as amt
+                FROM appointment_online_db.appointments
+                WHERE (appoint_date between ? and ?)
+                GROUP BY appoint_date
+                ORDER BY count(id) desc LIMIT 1;";
 
-        return $res->withJson(collect(DB::select($sql, [$sdate, $edate]))->first());
+        return $res->withJson([
+            'count' => collect(DB::select($sqlCount, [$sdate, $edate]))->first(),
+            'max' => collect(DB::select($sqlMax, [$sdate, $edate]))->first()
+        ]);
     }
 
     public function getAppointPerDay($req, $res, $args)
