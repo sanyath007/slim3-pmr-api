@@ -1,0 +1,150 @@
+.container {
+  font-family: "sarabun";
+  font-size: 12pt;
+  width: 100%;
+  background-image: url("assets/img/print_bg.png");
+  background-repeat: repeat;
+  background-position: center;
+}
+.header {
+  padding: 5px;
+}
+.header-img {
+  width: 10%;
+  float: left;
+}
+.header-text {
+  padding: 5px;
+  text-align: center;
+  width: 85%;
+  float: right;
+}
+.header-text h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+}
+.content {
+  display: flex;
+  justify-content: center;
+}
+.left__content-container {
+  width: 55%;
+  float: left;
+  margin: 0;
+  border: 1px dotted grey;
+}
+.right__content-container {
+  width: 44%;
+  float: right;
+  margin: 0;
+  margin-left: 5px;
+  border: 1px dotted grey;
+}
+.right__content-appoint {
+  height: 104px;
+}
+.right__content-remark {
+  height: 80px;
+}
+.left__content-patient,
+.right__content-appoint,
+.right__content-clinic {
+  border-bottom: 1px dotted grey;
+}
+.left__content-patient,
+.left__content-before,
+.right__content-appoint,
+.right__content-clinic,
+.right__content-remark {
+  margin: 0;
+  padding: 5px;
+}
+.bottom-content {
+  width: 100%;
+  padding: 10px;
+}
+.bottom-content p {
+  font-weight: bold;
+  margin: 2px;
+}
+.bottom-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bottom-content ul li {
+  margin: 0;
+  padding-left: 10px;
+}
+.bottom-content ul li p {
+  margin: 0;
+}
+.footer {
+  display: flex;
+  justify-content: center;
+}
+.footer-header {
+  width: 100%;
+  border-top: 1px dotted grey;
+  border-left: 1px dotted grey;
+  border-right: 1px dotted grey;
+  padding: 5px;
+}
+.footer-content {
+  display: flex;
+  justify-content: center;
+}
+.left-footer {
+  width: 60%;
+  height: 120px;
+  float: left;
+  border-top: 1px dotted grey;
+  border-bottom: 1px dotted grey;
+  border-left: 1px dotted grey;
+  padding: 10px;
+}
+.right-footer {
+  width: 33%;
+  height: 120px;
+  float: right;
+  border: 1px dotted grey;
+  padding: 10px;
+}
+.left__content-patient p,
+.left__content-before p,
+.right__content-appoint p,
+.right__content-clinic p,
+.right__content-remark p,
+.footer-header p,
+.right-footer p,
+.left-footer p {
+  margin: 5px;
+  font-weight: bold;
+}
+p span {
+  margin-left: 10px;
+  font-weight: normal;
+}
+p {
+  text-align: justify;
+}
+h1 {
+  text-align: center;
+}
+.checkbox-container {
+  margin: 0;
+}
+.checkmark {
+  float: left;
+  width: 8%;
+  height: 20px;
+  margin-left: 5px;
+}
+.checkbox-label {
+  float: left;
+  width: 88%;
+  height: 20px;
+  margin-bottom: 5px;
+}

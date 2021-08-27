@@ -254,32 +254,104 @@ class AppointmentController extends Controller
                 ],
         ]);
 
-        $text = "ภาษาไทย หรือ ภาษาไทยกลาง เป็นภาษาราชการและภาษาประจำชาติของประเทศไทย ภาษาไทยเป็นภาษาในกลุ่มภาษาไท ซึ่งเป็นกลุ่มย่อยของตระกูลภาษาไท-กะได สันนิษฐานว่า ภาษาในตระกูลนี้มีถิ่นกำเนิดจากทางตอนใต้ของประเทศจีน และนักภาษาศาสตร์บางส่วนเสนอว่า ภาษาไทยน่าจะมีความเชื่อมโยงกับตระกูลภาษาออสโตร-เอเชียติก ตระกูลภาษาออสโตรนีเซียน และตระกูลภาษาจีน-ทิเบต
-                ภาษาไทยเป็นภาษาที่มีระดับเสียงของคำแน่นอนหรือวรรณยุกต์เช่นเดียวกับภาษาจีน และออกเสียงแยกคำต่อคำ
-                ภาษาไทยปรากฏครั้งแรกในพุทธศักราช 1826 โดยพ่อขุนรามคำแหง และปรากฏอย่างสากลและใช้ในงานของราชการ เมื่อวันที่ 31 มีนาคม พุทธศักราช 2476 ด้วยการก่อตั้งสำนักงานราชบัณฑิตยสภาขึ้น และปฏิรูปภาษาไทย พุทธศักราช 2485
-                คำว่า ไทย หมายความว่า อิสรภาพ เสรีภาพ หรืออีกความหมายหนึ่งคือ ใหญ่ ยิ่งใหญ่ เพราะการจะเป็นอิสระได้จะต้องมีกำลังที่มากกว่า แข็งแกร่งกว่า เพื่อป้องกันการรุกรานจากข้าศึก คำนี้เป็นคำไทยแท้ที่เกิดจากการสร้างคำที่เรียก \"การลากคำเข้าวัด\" ซึ่งเป็นการลากความวิธีหนึ่ง ตามหลักคติชนวิทยา คนไทยเป็นชนชาติที่นับถือกันว่า ภาษาบาลี ซึ่งเป็นภาษาที่บันทึกพระธรรมคำสอนของพระพุทธเจ้าเป็นภาษาอันศักดิ์สิทธิ์และเป็นมงคล เมื่อคนไทยต้องการตั้งชื่อประเทศว่า ไท ซึ่งเป็นคำไทยแท้ จึงเติมตัว ย เข้าไปข้างท้าย เพื่อให้มีลักษณะคล้ายคำในภาษาบาลี – สันสกฤตเพื่อความเป็นมงคลตามความเชื่อของตน ภาษาไทยจึงหมายถึงภาษาของชนชาติไทยผู้เป็นไทนั่นเอง
-                พ่อขุนรามคำแหงได้ทรงประดิษฐ์อักษรไทยขึ้นเมื่อปี พ. ศ. 1826 มี พยัญชนะ 44 ตัว (21 เสียง), สระ 21 รูป (32 เสียง), วรรณยุกต์ 5 เสียง คือ เสียง สามัญ เอก โท ตรี จัตวา ภาษาไทยดัดแปลงมาจากบาลี-สันสกฤต มอญ และ เขมร";
-
+        $stylesheet = file_get_contents('assets/css/styles.css');
         $content = '
-            <style>
-                .container{
-                    font-family: "sarabun";
-                    font-size: 12pt;
-                }
-                p{
-                    text-align: justify;
-                }
-                h1{
-                    text-align: center;
-                }
-            </style>
-            <div class="container" style="width: 50%">
-                <h1>ภาษาไทย</h1>
-                <p>'.$text.'</p>
+            <div class="container">
+                <div class="header">
+                    <div class="header-img">
+                        <img src="assets/img/logo_mnrh_512x512.jpg" width="100%" height="100" />
+                    </div>
+                    <div class="header-text">
+                        <h1>ใบนัดตรวจโรคหัวใจและหลอดเลือด</h1>
+                        <h2>โรงพยาบาลมหาราชนครราชสีมา</h2>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="left__content-container">
+                        <div class="left__content-patient">
+                            <p>เลขที่ใบส่งตัว <span>23839-1-64004261</span></p>
+                            <p>เลขที่บัตรประชาชน <span>1 3020 00142 32 5</span></p>
+                            <p>ชื่อ-สกุล <span>นางสาววังแก้ว บุญจันทึก</span></p>
+                            <p>โทรศัพท์ <span>0933356365</span></p>
+                            <p>สิทธิการรักษา <span>บัตรทองร่วมจ่าย 30 บาท</span></p>
+                            <p>ผลการวินิจฉัย <span>Cardiac Arrhythmia</span></p>
+                        </div>
+                        <div class="left__content-before">
+                            <p>การปฎิบัติก่อนมา</p>
+                            <div class="checkbox-container">
+                                <div class="checkmark">
+                                    <img src="assets/img/checkmark.png" width="20" height="20" />
+                                </div>
+                                <div class="checkbox-label">
+                                    <span>EKG (ตรวจคลื่นไฟฟ้าหัวใจ)</span>
+                                </div>
+                            </div>
+                            <div class="checkbox-container">
+                                <div class="checkmark">
+                                    <img src="assets/img/checkmark.png" width="20" height="20" />
+                                </div>
+                                <div class="checkbox-label">
+                                    <span>Chest X-Ray (ทำ X-Ray หน้าอก)</span>
+                                </div>
+                            </div>
+                            <div class="checkbox-container">
+                                <div class="checkmark">
+                                    <img src="assets/img/checkmark.png" width="20" height="20" />
+                                </div>
+                                <div class="checkbox-label">
+                                    <span>ไม่ต้องงดน้ำงดอาหารก่อนมาตรวจ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right__content-container">
+                        <div class="right__content-appoint">
+                            <p>นัดพบ <span>นายแพทย์ กิตติพงศ์ ภิญโญสโมสร</span></p>
+                            <p>วันนัด <span>วันจันทร์ที่ 30 สิงหาคม พ.ศ. 2564</span></p>
+                            <p>เวลา <span>08.00 - 12.00 น.</span></p>
+                            </div>
+                        <div class="right__content-clinic">
+                            <p>ยื่นใบนัดที่ <span>ห้องตรวจอายุรกรรม โซน ซี</span></p>
+                            <p>อาคาร <span>ผู้ป่วยนอก</span></p>
+                            <p>หมายเลขโทรศัพท์ <span>044232207</span></p>
+                        </div>
+                        <div class="right__content-remark">
+                            <p>หมายเหตุ : <span>กรณีไม่สามารถมาตามนัดได้ หรือต้องการเลื่อนนัด ให้ติดต่อที่โรงพยาบาลที่ทำการออกใบนัด</span></p>
+                        </div>
+                    </div>
+                    <div class="bottom-content">
+                        <p>ขั้นตอนการรับบริการ</p>
+                        <ul>
+                            <li>1. ยื่นใบนัด / ใบส่งตัว (ออกจากระบบ R9Refer เท่านั้น) ที่ห้องตรวจอายุรกรรม โซน ซี</li>
+                            <li>2. ชั่งน้ำหนัก วัดความดันโลหิต</li>
+                            <li>3. รอพยาบาลเรียกซักประวัติ</li>
+                            <li>4. พบแพทย์</li>
+                            <li>5. พบพยาบาลหลังตรวจ รับใบสั่งยา และ / หรือ ใบนัดครั้งต่อไป</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer">
+                    <div class="footer-header">
+                        <p>หมายเหตุ : <span>กรณีไม่สามารถมาตามนัดได้ หรือต้องการเลื่อนนัด ให้ติดต่อที่โรงพยาบาลที่ออกใบนัด</span></p>
+                    </div>
+                    <div class="footer-content">
+                        <div class="left-footer">
+                            <p>ผู้ลงเวลานัด <span>-</span></p>
+                            <p>ผู้พิมพ์ใบนัด <span>นางสาววังแก้ว บุญจันทึก</span></p>
+                            <p>วัน/เวลา ที่ลงนัด <span>25 สิงหาคม พ.ศ. 2564 : 10:59:03 น.</span></p>
+                        </div>
+                        <div class="right-footer">
+                            <p>สถานพยาบาลออกใบส่งตัว</p>
+                            <p><span>ศูนย์สุขภาพชุมชนเมือง 1 หัวทะเล</span></p>
+                            <p>โทรศัพท์ <span>044395000 ต่อ 2510</span></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         ';
 
-        $mpdf->WriteHTML($content);
+        $mpdf->WriteHTML($stylesheet, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $mpdf->WriteHTML($content, \Mpdf\HTMLParserMode::HTML_BODY);
         $mpdf->Output(APP_ROOT_DIR . '/public/downloads/test.pdf', 'F');
     }
 }
