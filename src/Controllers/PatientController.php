@@ -29,7 +29,7 @@ class PatientController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
     public function getById($request, $response, $args)
     {
         $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
@@ -42,7 +42,20 @@ class PatientController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
+    public function getByCid($request, $response, $args)
+    {
+        $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
+                        ->where('cid', $args['cid'])
+                        ->first();
+                    
+        $data = json_encode($patient, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
     public function generateId($request, $response, $args)
     {
         echo Uuid::uuid4();
@@ -60,7 +73,7 @@ class PatientController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
     public function getFormInit($request, $response, $args)
     {                    
         $data = json_encode([
@@ -191,7 +204,7 @@ class PatientController extends Controller
                     ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
         }
     }
-    
+
     public function update($request, $response, $args)
     {
         try {
