@@ -273,7 +273,7 @@ class AppointmentController extends Controller
         $building = $appointment['relations']['clinic']->id == '9' ? 'อาคาร M Park' : 'อาคารผู้ป่วยนอก';
         $appointTime = $appointment->appoint_date == '1' ? '08.00 - 12.00 น.' : '12.00 - 16.00 น.';
         $doctor = $appointment['relations']['clinic']->id == 9 ? '' : '
-                    <p>นัดพบ <span>' .$appointment['relations']['doctor']->title.$appointment['relations']['doctor']['relations']['employee']->fname. '' .$appointment['relations']['doctor']['relations']['employee']->lname. '</span></p>
+                    <p>นัดพบ <span>' .$appointment['relations']['doctor']->title.$appointment['relations']['doctor']['relations']['employee']->fname. ' ' .$appointment['relations']['doctor']['relations']['employee']->lname. '</span></p>
                 ';
         $before = '';
 

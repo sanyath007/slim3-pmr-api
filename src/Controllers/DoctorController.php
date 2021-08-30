@@ -44,12 +44,21 @@ class DoctorController extends Controller
 
     public function getDortorsOfClinic($request, $response, $args)
     {
-        $doctor = Doctor::join('doctor_specialists', 'doctors.emp_id', '=', 'doctor_specialists.doctor')
-                    ->where('doctor_specialists.specialist', $args['clinic'])
+        // TODO: to response doctor that have fewest appointments
+        $sql = "select d.emp_id, count(a.id) as amt	
+                from appointment_online_db.doctors d
+                left join appointment_online_db.appointments a on (d.emp_id=a.doctor)
+                where (d.emp_id in (select doctor from appointment_online_db.doctor_specialists where specialist=?))
+                and (d.status='1') #1=อยู่,2=ลาศึกษาต่อ,3=ลาคลอด,4=โอน/ย้าย,5=ลาออก
+                group by d.emp_id
+                order by count(a.id) ASC";
+        $doctor_count = collect(DB::select($sql, [$args['specialist']]))->first();
+
+        $doctor = Doctor::where('emp_id', $doctor_count->emp_id)
                     ->with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
                     ->with('depart', 'specialists', 'specialists.specialist')
                     ->first();
-                    
+
         $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
