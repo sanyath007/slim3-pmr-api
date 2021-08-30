@@ -42,6 +42,21 @@ class DoctorController extends Controller
                 ->write($data);
     }
 
+    public function getDortorsOfClinic($request, $response, $args)
+    {
+        $doctor = Doctor::join('doctor_specialists', 'doctors.emp_id', '=', 'doctor_specialists.doctor')
+                    ->where('doctor_specialists.specialist', $args['clinic'])
+                    ->with('employee', 'employee.position', 'employee.positionClass', 'employee.positionType')
+                    ->with('depart', 'specialists', 'specialists.specialist')
+                    ->first();
+                    
+        $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
     public function getInitForm($request, $response, $args)
     {
         $data = json_encode([

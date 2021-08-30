@@ -35,6 +35,7 @@ $app->group('/api', function(Slim\App $app) {
     $app->post('/doctors', 'DoctorController:store');
     $app->put('/doctors/{id}', 'DoctorController:update');
     $app->delete('/doctors/{id}', 'DoctorController:delete');
+    $app->get('/doctors/{clinic}/clinic', 'DoctorController:getDortorsOfClinic');
 
     $app->get('/dashboard/{month}/stat-card', 'DashboardController:getStatCard');
     $app->get('/dashboard/{month}/appoint-day', 'DashboardController:getAppointPerDay');
