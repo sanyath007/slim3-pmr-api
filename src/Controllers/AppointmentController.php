@@ -13,6 +13,8 @@ use App\Models\Clinic;
 use App\Models\DiagGroup;
 use App\Models\ReferCause;
 use App\Models\Right;
+use App\Models\Doctor;
+use App\Models\Room;
 
 class AppointmentController extends Controller
 {
@@ -100,8 +102,10 @@ class AppointmentController extends Controller
         $data = json_encode([
             'clinics'       => Clinic::all(),
             'diagGroups'    => DiagGroup::all(),
-            'referCauses'    => ReferCause::all(),
-            'rights'        => Right::all()
+            'referCauses'   => ReferCause::all(),
+            'rights'        => Right::all(),
+            'doctors'       => Doctor::all(),
+            'rooms'         => Room::all()
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
