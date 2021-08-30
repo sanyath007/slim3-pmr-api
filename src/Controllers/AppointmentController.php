@@ -104,7 +104,7 @@ class AppointmentController extends Controller
             'diagGroups'    => DiagGroup::all(),
             'referCauses'   => ReferCause::all(),
             'rights'        => Right::all(),
-            'doctors'       => Doctor::all(),
+            'doctors'       => Doctor::with('employee')->get(),
             'rooms'         => Room::all()
         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
