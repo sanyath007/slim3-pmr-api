@@ -244,6 +244,59 @@ class AppointmentController extends Controller
         }
     }
 
+    public function update($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $appointment = Appointment::find($args['id']);
+            $appointment->patient       = $post['patient_id'];
+            $appointment->patient_right = $post['patient_right'];
+            $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
+            $appointment->appoint_time  = $post['appoint_time'];
+            $appointment->appoint_type  = $post['appoint_type'];
+            $appointment->clinic        = $post['clinic'];
+            $appointment->doctor        = $post['doctor'];
+            $appointment->diag_group    = $post['diag_group'];
+            $appointment->diag_text     = $post['diag_text'];
+            $appointment->refer_no      = $post['refer_no'];
+            $appointment->refer_cause   = $post['refer_cause'];
+            // $appointment->hospcode      = $post['hospcode'];
+            $appointment->appoint_user  = $post['user'];
+            // $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+
+            if($appointment->save()) {
+                /** สร้างไฟล์ใบนัด */
+                $this->createAppointForm($appointment->id);
+
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'        => 1,
+                            'message'       => 'Inserting successfully',
+                            'appointment'   => $appointment
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
     private function createAppointForm($id)
     {
         $appointment = Appointment::with(['patient' => function($q) {
