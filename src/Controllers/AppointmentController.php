@@ -274,7 +274,7 @@ class AppointmentController extends Controller
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
                             'status'        => 1,
-                            'message'       => 'Inserting successfully',
+                            'message'       => 'Updating successfully',
                             'appointment'   => $appointment
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             } else {
@@ -442,6 +442,7 @@ class AppointmentController extends Controller
             </div>
         ';
 
+        // TODO: should create pdf file with generated unduplicate name for avoid browser caching
         $filename = APP_ROOT_DIR . '/public/downloads/' .$appointment->id. '.pdf';
 
         $this->generatePdf($stylesheet, $content, $filename);
