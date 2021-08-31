@@ -10,6 +10,6 @@ class Right extends Model
 
     public function patients()
     {
-        return $this->hasMany(Patient::class, 'id', 'right');
+        return $this->hasMany(Patient::class, 'id', 'main_right');
     }
 }

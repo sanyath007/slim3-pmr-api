@@ -10,7 +10,7 @@ class Patient extends Model
 
     public function right()
     {
-        return $this->belongsTo(Right::class, 'right', 'id');
+        return $this->belongsTo(Right::class, 'main_right', 'id');
     }
     
     public function blood_group()

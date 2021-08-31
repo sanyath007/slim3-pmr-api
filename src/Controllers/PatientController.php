@@ -21,8 +21,9 @@ class PatientController extends Controller
     public function getAll($request, $response, $args)
     {
         $page = (int)$request->getQueryParam('page');
+
         $patients = Patient::orderBy('hn')->get();
-        
+
         $data = json_encode($patients, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
@@ -32,10 +33,8 @@ class PatientController extends Controller
 
     public function getById($request, $response, $args)
     {
-        $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
-                        ->where('id', $args['id'])
-                        ->first();
-                    
+        $patient    = Patient::with('right')->where('id', $args['id'])->first();
+
         $data = json_encode($patient, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
@@ -45,10 +44,8 @@ class PatientController extends Controller
 
     public function getByCid($request, $response, $args)
     {
-        $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
-                        ->where('cid', $args['cid'])
-                        ->first();
-                    
+        $patient    = Patient::with('right')->where('cid', $args['cid'])->first();
+
         $data = json_encode($patient, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
@@ -59,19 +56,6 @@ class PatientController extends Controller
     public function generateId($request, $response, $args)
     {
         echo Uuid::uuid4();
-    }
-
-    public function getProfile($request, $response, $args)
-    {
-        $patient    = Patient::with('right', 'blood_group', 'drug_allergies')
-                        ->where('cid', $args['cid'])
-                        ->first();
-                    
-        $data = json_encode($patient, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-
-        return $response->withStatus(200)
-                ->withHeader("Content-Type", "application/json")
-                ->write($data);
     }
 
     public function getFormInit($request, $response, $args)
