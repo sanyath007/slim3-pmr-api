@@ -39,13 +39,13 @@ $container['db'] = function($c) use ($capsule) {
  */
 $container['pdo'] = function ($c) {
     try {
-        $conStr = $c['settings']['db'];
+        $conStr = $c['settings']['homc_db'];
 
-        return new PDO($conStr['driver']. ":host=" .$conStr['host']. ";dbname=" .$conStr['database'], $conStr['username'], $conStr['password'], $conStr['options']);
+        return new PDO($conStr['driver']. ":Server=" .$conStr['host']. ";Database=" .$conStr['database'], $conStr['username'], $conStr['password']);
     }
     catch(\Exception $ex) {
         return $ex->getMessage();
-    }   
+    }
 };
 
 /** 
@@ -115,6 +115,10 @@ $container['AppointmentController'] = function($c) {
 
 $container['PatientController'] = function($c) {
     return new App\Controllers\PatientController($c);
+};
+
+$container['HPatientController'] = function($c) {
+    return new App\Controllers\HPatientController($c);
 };
 
 $container['DepartmentController'] = function($c) {

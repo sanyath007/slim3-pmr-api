@@ -28,5 +28,14 @@ return [
                 PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES ' .getenv("DB_CHARSET"). ' COLLATE ' .getenv("DB_COLLATE")
             ],
         ],
+        'homc_db' => [
+            'driver'    => getenv("DB_HOMC_DRIVER"),
+            'host'      => getenv("DB_HOMC_HOST"),
+            'database'  => getenv("DB_HOMC_NAME"),
+            'username'  => getenv("DB_HOMC_USER"),
+            'password'  => getenv("DB_HOMC_PASS"),
+            'port'      => getenv("DB_HOMC_PORT"),
+            'prefix'    => getenv("DB_HOMC_PREFIX"),
+        ],
     ]
 ];
