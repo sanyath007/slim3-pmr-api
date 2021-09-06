@@ -22,6 +22,14 @@ $app->group('/api', function(Slim\App $app) {
     $app->put('/appointments/{id}', 'AppointmentController:update');
     $app->delete('/appointments/{id}', 'AppointmentController:delete');
 
+    $app->get('/admits', 'AdmitAppointmentController:getAll');
+    $app->get('/admits/{id}', 'AdmitAppointmentController:getById');
+    $app->get('/admits/{date}/count', 'AdmitAppointmentController:getCountByDate');
+    $app->get('/admits/init/form', 'AdmitAppointmentController:getInitForm');
+    $app->post('/admits', 'AdmitAppointmentController:store');
+    $app->put('/admits/{id}', 'AdmitAppointmentController:update');
+    $app->delete('/admits/{id}', 'AdmitAppointmentController:delete');
+
     $app->get('/patients', 'PatientController:getAll');
     $app->get('/patients/{id}', 'PatientController:getById');
     $app->get('/patients/{cid}/cid', 'PatientController:getByCid');

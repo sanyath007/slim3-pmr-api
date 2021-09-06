@@ -16,7 +16,7 @@ use App\Models\Right;
 use App\Models\Doctor;
 use App\Models\Room;
 
-class AppointmentController extends Controller
+class AdmitAppointmentController extends Controller
 {
     public function getAll($request, $response, $args)
     {
