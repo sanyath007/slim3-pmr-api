@@ -8,10 +8,8 @@ use Respect\Validation\Validator as v;
 use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Models\Patient;
-use App\Models\Appointment;
+use App\Models\AdmitAppointment;
 use App\Models\Clinic;
-use App\Models\DiagGroup;
-use App\Models\ReferCause;
 use App\Models\Right;
 use App\Models\Doctor;
 use App\Models\Room;
@@ -20,14 +18,8 @@ class AdmitAppointmentController extends Controller
 {
     public function getAll($request, $response, $args)
     {
-        $appointments = Appointment::with(['patient' => function($q) {
+        $appointments = AdmitAppointment::with(['patient' => function($q) {
                             $q->select('id','hn','pname','fname','lname','cid','tel1');
-                        }])
-                        ->with(['clinic' => function($q) {
-                            $q->select('id', 'clinic_name');
-                        }])
-                        ->with(['diag' => function($q) {
-                            $q->select('id', 'name');
                         }])
                         ->with(['right' => function($q) {
                             $q->select('id', 'right_name');
@@ -38,7 +30,7 @@ class AdmitAppointmentController extends Controller
                         ->with(['doctor.employee' => function($q) {
                             $q->select('id', 'prefix', 'fname', 'lname');
                         }])
-                        ->orderBy('appoint_date')
+                        ->orderBy('admdate')
                         ->get();
         $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -52,17 +44,8 @@ class AdmitAppointmentController extends Controller
         $appointment    = Appointment::with(['patient' => function($q) {
                                 $q->select('id','hn','pname','fname','lname','cid','tel1','sex','birthdate');
                             }])
-                            ->with(['clinic' => function($q) {
-                                $q->select('id', 'clinic_name');
-                            }])
-                            ->with(['diag' => function($q) {
-                                $q->select('id', 'name');
-                            }])
                             ->with(['right' => function($q) {
                                 $q->select('id', 'right_name');
-                            }])
-                            ->with(['referCause' => function($q) {
-                                $q->select('id', 'name');
                             }])
                             ->where('id', $args['id'])
                             ->first();
@@ -91,12 +74,12 @@ class AdmitAppointmentController extends Controller
 
     public function getCountByDate($request, $response, $args)
     {
-        $sql = "SELECT appoint_date, COUNT(id) AS num
-                FROM appointments 
-                GROUP BY appoint_date 
-                ORDER BY appoint_date";
-        $appointments = DB::select($sql);
-        $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        $sql = "SELECT admdate, COUNT(id) AS num
+                FROM admit_appointments 
+                GROUP BY admdate 
+                ORDER BY admdate";
+        $admits = DB::select($sql);
+        $data = json_encode($admits, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
@@ -121,68 +104,41 @@ class AdmitAppointmentController extends Controller
 
     public function store($request, $response, $args)
     {
-        // $this->validator->validate($request, [
-        //     'patient_hn'    => v::numeric(),
-        //     'cid'           => v::numeric(),
-        //     'pname'         => v::numeric(),
-        //     'fname'         => v::numeric(),
-        //     'lname'         => v::numeric(),
-        //     'appoint_date'  => v::stringType()->notEmpty(),
-        //     'appoint_time'  => v::stringType()->notEmpty(),
-        //     'clinic_id'     => v::stringType()->notEmpty(),
-        //     'diag_group'    => v::stringType()->notEmpty(),
-        //     'refer_no'      => v::stringType()->notEmpty(),
-        //     'refer_cause'   => v::stringType()->notEmpty(),
-        // ]);
-
-        // if ($this->validator->failed()) {
-        //     return $response
-        //                 ->withStatus(200)
-        //                 ->withHeader("Content-Type", "application/json")
-        //                 ->write(json_encode([
-        //                     'status' => 0,
-        //                     'message' => 'Data Invalid !!',
-        //                     'errors' => $this->validator->getMessages()
-        //                 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
-        // }
-
-        // TODO: should check duplicated patient data before store to db
         try {
             $post = (array)$request->getParsedBody();
 
-            if (!empty($post['patient_id'])) {
-                $appointment = new Appointment;
-                $appointment->patient       = $post['patient_id'];
-                $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-                $appointment->appoint_time  = $post['appoint_time'];
-                $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic        = $post['clinic'];
-                $appointment->doctor        = $post['doctor'];
-                $appointment->diag_group    = $post['diag_group'];
-                $appointment->diag_text     = $post['diag_text'];
-                $appointment->refer_no      = $post['refer_no'];
-                $appointment->refer_cause   = $post['refer_cause'];
-                $appointment->hospcode      = $post['hospcode'];
-                $appointment->appoint_user  = $post['user'];
-                $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
-                $appointment->save();
+            // TODO: should check duplicated patient data before store to db
+            $patient = Patient::where('hn', $post['hn'])->orWhere('cid', $post['cid'])->first();
+
+            if ($patient) {
+                $admit = new AdmitAppointment;
+                $admit->patient_hn      = $post['hn'];
+                $admit->patient_right   = $post['patient_right'];
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                // $admit->room            = $post['room'];
+                $admit->doctor          = $post['doctor'];
+                $admit->admit_for       = $post['admit_for'];
+                $admit->diag_text       = $post['diag_text'];
+                $admit->admit_user      = $post['user'];
+                $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+                $admit->save();
 
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status' => 1,
-                            'message' => 'Inserting successfully',
-                            'appointment' => $appointment
+                            'status'    => 1,
+                            'message'   => 'Inserting successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             }
 
             $patient = new Patient;
-            $patient->hn            = $post['patient_hn'];
+            $patient->hn            = $post['hn'];
             $patient->cid           = $post['cid'];
             $patient->passport      = $post['passport'];
             $patient->pname         = $post['pname'];
@@ -196,33 +152,29 @@ class AdmitAppointmentController extends Controller
             $patient->main_right    = $post['patient_right'];
             
             if($patient->save()) {
-                $appointment = new Appointment;
-                $appointment->patient       = $patient->id;
-                $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-                $appointment->appoint_time  = $post['appoint_time'];
-                $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic        = $post['clinic'];
-                $appointment->doctor        = $post['doctor'];
-                $appointment->diag_group    = $post['diag_group'];
-                $appointment->diag_text     = $post['diag_text'];
-                $appointment->refer_no      = $post['refer_no'];
-                $appointment->refer_cause   = $post['refer_cause'];
-                $appointment->hospcode      = $post['hospcode'];
-                $appointment->appoint_user  = $post['user'];
-                $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
-                $appointment->save();
+                $admit = new AdmitAppointment;
+                $admit->patient_hn      = $post['hn'];
+                $admit->patient_right   = $post['patient_right'];
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                // $admit->room            = $post['room'];
+                $admit->doctor          = $post['doctor'];
+                $admit->admit_for       = $post['admit_for'];
+                $admit->diag_text       = $post['diag_text'];
+                $admit->admit_user      = $post['user'];
+                $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+                $admit->save();
 
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status' => 1,
-                            'message' => 'Inserting successfully',
-                            'appointment' => $appointment
+                            'status'    => 1,
+                            'message'   => 'Inserting successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             } else {
                 return $response
@@ -249,33 +201,29 @@ class AdmitAppointmentController extends Controller
         try {
             $post = (array)$request->getParsedBody();
 
-            $appointment = Appointment::find($args['id']);
-            $appointment->patient       = $post['patient_id'];
-            $appointment->patient_right = $post['patient_right'];
-            $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-            $appointment->appoint_time  = $post['appoint_time'];
-            $appointment->appoint_type  = $post['appoint_type'];
-            $appointment->clinic        = $post['clinic'];
-            $appointment->doctor        = $post['doctor'];
-            $appointment->diag_group    = $post['diag_group'];
-            $appointment->diag_text     = $post['diag_text'];
-            $appointment->refer_no      = $post['refer_no'];
-            $appointment->refer_cause   = $post['refer_cause'];
-            // $appointment->hospcode      = $post['hospcode'];
-            $appointment->appoint_user  = $post['user'];
-            // $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+            $admit = AdmitAppointment::find($args['id']);
+            $admit->patient_hn      = $post['hn'];
+            $admit->patient_right   = $post['patient_right'];
+            $admit->admdate         = thdateToDbdate($post['admdate']);
+            $admit->dchdate         = thdateToDbdate($post['dchdate']);
+            // $admit->room            = $post['room'];
+            $admit->doctor          = $post['doctor'];
+            $admit->admit_for       = $post['admit_for'];
+            $admit->diag_text       = $post['diag_text'];
+            $admit->admit_user      = $post['user'];
+            // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
 
-            if($appointment->save()) {
+            if($admit->save()) {
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status'        => 1,
-                            'message'       => 'Updating successfully',
-                            'appointment'   => $appointment
+                            'status'    => 1,
+                            'message'   => 'Updating successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             } else {
                 return $response
