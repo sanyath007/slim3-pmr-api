@@ -40,11 +40,17 @@ class AdmitAppointmentController extends Controller
 
     public function getById($request, $response, $args)
     {
-        $appointment    = Appointment::with(['patient' => function($q) {
+        $appointment    = AdmitAppointment::with(['patient' => function($q) {
                                 $q->select('id','hn','pname','fname','lname','cid','tel1','sex','birthdate');
                             }])
                             ->with(['right' => function($q) {
                                 $q->select('id', 'right_name');
+                            }])
+                            ->with(['doctor' => function($q) {
+                                $q->select('emp_id', 'title', 'license_no');
+                            }])
+                            ->with(['doctor.employee' => function($q) {
+                                $q->select('id', 'prefix', 'fname', 'lname');
                             }])
                             ->where('id', $args['id'])
                             ->first();
@@ -59,7 +65,7 @@ class AdmitAppointmentController extends Controller
     public function getAppointmentsByPatient($request, $response, $args)
     {
         $page = (int)$request->getQueryParam('page');
-        $model = Appointment::where('patient_hn', $args['hn'])
+        $model = AdmitAppointment::where('patient_hn', $args['hn'])
                     ->orderBy('stat_date', 'DESC')
                     ->orderBy('stat_time', 'DESC');
         $appointments = paginate($model, 10, $page, $request);
