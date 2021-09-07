@@ -14,15 +14,15 @@ class DashboardController extends Controller
 
         $sqlCount = "SELECT COUNT(id) as totalcase,
                 COUNT(case when (patient in (
-                    select id from appointment_online_db.patients where date(created_at) between ? and ?)
+                    select id from patients where date(created_at) between ? and ?)
                 ) then id end) as newcase
-                FROM appointment_online_db.appointments
-                WHERE (appoint_date between ? and ?) ";
+                FROM admit_appointments
+                WHERE (admdate between ? and ?) ";
         
-        $sqlMax = "SELECT appoint_date, COUNT(id) as amt
-                FROM appointment_online_db.appointments
-                WHERE (appoint_date between ? and ?)
-                GROUP BY appoint_date
+        $sqlMax = "SELECT admdate, COUNT(id) as amt
+                FROM admit_appointments
+                WHERE (admdate between ? and ?)
+                GROUP BY admdate
                 ORDER BY count(id) desc LIMIT 1;";
 
         return $res->withJson([
@@ -36,10 +36,10 @@ class DashboardController extends Controller
         $sdate = $args['month']. '-01';
         $edate = $args['month']. '-31';
 
-        $sql="SELECT CAST(DAY(appoint_date) AS SIGNED) AS d, COUNT(DISTINCT id) as amt
-                FROM appointments WHERE (appoint_date between ? and ?)
-                GROUP BY CAST(DAY(appoint_date) AS SIGNED) 
-                ORDER BY CAST(DAY(appoint_date) AS SIGNED);";
+        $sql="SELECT CAST(DAY(admdate) AS SIGNED) AS d, COUNT(DISTINCT id) as amt
+                FROM admit_appointments WHERE (admdate between ? and ?)
+                GROUP BY CAST(DAY(admdate) AS SIGNED) 
+                ORDER BY CAST(DAY(admdate) AS SIGNED);";
 
         return $res->withJson(DB::select($sql, [$sdate, $edate]));
     }
