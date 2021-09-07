@@ -9,7 +9,6 @@ use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Models\Patient;
 use App\Models\AdmitAppointment;
-use App\Models\Clinic;
 use App\Models\Right;
 use App\Models\Doctor;
 use App\Models\Room;
@@ -89,9 +88,6 @@ class AdmitAppointmentController extends Controller
     public function getInitForm($request, $response, $args)
     {
         $data = json_encode([
-            'clinics'       => Clinic::all(),
-            'diagGroups'    => DiagGroup::all(),
-            'referCauses'   => ReferCause::all(),
             'rights'        => Right::all(),
             'doctors'       => Doctor::with('employee')->get(),
             'rooms'         => Room::all()
@@ -112,10 +108,10 @@ class AdmitAppointmentController extends Controller
 
             if ($patient) {
                 $admit = new AdmitAppointment;
-                $admit->patient_hn      = $post['hn'];
+                $admit->patient         = $patient->id;
                 $admit->patient_right   = $post['patient_right'];
                 $admit->admdate         = thdateToDbdate($post['admdate']);
-                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
                 $admit->admit_for       = $post['admit_for'];
@@ -153,10 +149,10 @@ class AdmitAppointmentController extends Controller
             
             if($patient->save()) {
                 $admit = new AdmitAppointment;
-                $admit->patient_hn      = $post['hn'];
+                $admit->patient         = $patient->id;
                 $admit->patient_right   = $post['patient_right'];
                 $admit->admdate         = thdateToDbdate($post['admdate']);
-                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
                 $admit->admit_for       = $post['admit_for'];
