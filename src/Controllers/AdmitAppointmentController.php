@@ -204,7 +204,7 @@ class AdmitAppointmentController extends Controller
             $post = (array)$request->getParsedBody();
 
             $admit = AdmitAppointment::find($args['id']);
-            $admit->patient_hn      = $post['hn'];
+            $admit->patient         = $post['patient_id'];
             $admit->patient_right   = $post['patient_right'];
             $admit->admdate         = thdateToDbdate($post['admdate']);
             $admit->dchdate         = thdateToDbdate($post['dchdate']);
