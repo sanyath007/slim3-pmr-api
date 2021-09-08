@@ -22,7 +22,7 @@ class PatientController extends Controller
     {
         $page = (int)$request->getQueryParam('page');
 
-        $patients = Patient::orderBy('hn')->get();
+        $patients = Patient::with('right')->orderBy('hn')->get();
 
         $data = json_encode($patients, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
