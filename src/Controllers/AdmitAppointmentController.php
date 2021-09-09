@@ -110,7 +110,11 @@ class AdmitAppointmentController extends Controller
             $post = (array)$request->getParsedBody();
 
             // TODO: should check duplicated patient data before store to db
-            $patient = Patient::where('hn', $post['hn'])->orWhere('cid', $post['cid'])->first();
+            $patient = Patient::where('hn', $post['hn'])
+                        ->when(!empty($post['cid']), function($q) use ($post) {
+                            $q->orWhere('cid', $post['cid']);    
+                        })
+                        ->first();
 
             if ($patient) {
                 $admit = new AdmitAppointment;
