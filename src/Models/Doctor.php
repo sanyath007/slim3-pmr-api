@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Doctor extends Model
 {
     protected $table = "doctors";
+    protected $primaryKey = "emp_id";
+    public $incrementing = false; //ไม่ใช้ options auto increment
+    // public $timestamps = false; //ไม่ใช้ field updated_at และ created_at
 
     public function appointments()
     {

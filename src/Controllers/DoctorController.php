@@ -83,99 +83,170 @@ class DoctorController extends Controller
 
     public function store($request, $response, $args)
     {
-        $post = (array)$request->getParsedBody();
-        $employee = new Employee;
-        $employee->cid              = $post['cid'];
-        $employee->patient_hn       = $post['patient_hn'];
-        $employee->prefix           = $post['prefix'];
-        $employee->fname            = $post['fname'];
-        $employee->lname            = $post['lname'];
-        $employee->sex              = $post['sex'];
-        $employee->birthdate        = thdateToDbdate($post['birthdate']);
-        $employee->position         = $post['position'];
-        $employee->position_class   = $post['position_class'];
-        $employee->position_type    = $post['position_type'];
-        $employee->start_date       = thdateToDbdate($post['start_date']);
+        try {
+            $post = (array)$request->getParsedBody();
 
-        if ($employee->save()) {
-            $doctor = new Doctor;
-            $doctor->emp_id                 = $employee->id;
-            $doctor->title                  = $post['title'];
-            $doctor->license_no             = $post['license_no'];
-            $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
-            $doctor->depart                 = $post['depart'];
-            $doctor->remark                 = $post['remark'];
-            $doctor->save();
+            $employee = new Employee;
+            $employee->cid              = $post['cid'];
+            $employee->patient_hn       = $post['patient_hn'];
+            $employee->prefix           = $post['prefix'];
+            $employee->fname            = $post['fname'];
+            $employee->lname            = $post['lname'];
+            $employee->sex              = $post['sex'];
+            $employee->birthdate        = thdateToDbdate($post['birthdate']);
+            $employee->position         = $post['position'];
+            $employee->position_class   = $post['position_class'];
+            $employee->position_type    = $post['position_type'];
+            $employee->start_date       = thdateToDbdate($post['start_date']);
 
-            /** Update doctor specialist table */
-            $specialist = new DoctorSpecialist;
-            $specialist->doctor     = $employee->id;
-            $specialist->specialist    = $post['specialist'];
-            $specialist->save();
+            if ($employee->save()) {
+                $doctor = new Doctor;
+                $doctor->emp_id                 = $employee->id;
+                $doctor->title                  = $post['title'];
+                $doctor->license_no             = $post['license_no'];
+                $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
+                $doctor->depart                 = $post['depart'];
+                $doctor->remark                 = $post['remark'];
+                $doctor->save();
 
-            $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+                /** Update doctor specialist table */
+                $specialist = new DoctorSpecialist;
+                $specialist->doctor     = $employee->id;
+                $specialist->specialist    = $post['specialist'];
+                $specialist->save();
 
-            return $response->withStatus(200)
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Inserting successfully',
+                            'doctor'    => $doctor
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                        ->withStatus(500)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 0,
+                            'message'   => 'Something went wrong!!'
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
                     ->withHeader("Content-Type", "application/json")
-                    ->write($data);
-        } else {
-            // Throw error exeption
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
         }
     }
 
     public function update($request, $response, $args)
     {
-        $post = (array)$request->getParsedBody();
-        $employee = Employee::find($args['id']);
-        $employee->cid              = $post['cid'];
-        $employee->patient_hn       = $post['patient_hn'];
-        $employee->prefix           = $post['prefix'];
-        $employee->fname            = $post['fname'];
-        $employee->lname            = $post['lname'];
-        $employee->sex              = $post['sex'];
-        $employee->birthdate        = thdateToDbdate($post['birthdate']);
-        $employee->position         = $post['position'];
-        $employee->position_class   = $post['position_class'];
-        $employee->position_type    = $post['position_type'];
-        $employee->start_date       = thdateToDbdate($post['start_date']);
+        try {
+            $post = (array)$request->getParsedBody();
 
-        if ($employee->save()) {
-            $doctor = Doctor::where('emp_id', $args['id']);
-            $doctor->title                  = $post['title'];
-            $doctor->license_no             = $post['license_no'];
-            $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
-            $doctor->depart                 = $post['depart'];
-            $doctor->remark                 = $post['remark'];
-            $doctor->save();
+            $employee = Employee::find($args['id']);
+            $employee->cid              = $post['cid'];
+            $employee->patient_hn       = $post['patient_hn'];
+            $employee->prefix           = $post['prefix'];
+            $employee->fname            = $post['fname'];
+            $employee->lname            = $post['lname'];
+            $employee->sex              = $post['sex'];
 
-            /** Update doctor specialist table */
+            if (array_key_exists('birthdate', $post)) {
+                $employee->birthdate        = thdateToDbdate($post['birthdate']);
+            }
 
-            $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+            $employee->position         = $post['position'];
+            $employee->position_class   = $post['position_class'];
+            $employee->position_type    = $post['position_type'];
 
-            return $response->withStatus(200)
+            if (array_key_exists('start_date', $post)) {
+                $employee->start_date       = thdateToDbdate($post['start_date']);
+            }
+
+            if ($employee->save()) {
+                $doctor = Doctor::find($args['id']);
+                $doctor->title                  = $post['title'];
+                $doctor->license_no             = $post['license_no'];
+
+                if (array_key_exists('license_renewal_date', $post)) {
+                    $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
+                }
+
+                $doctor->depart                 = $post['depart'];
+                $doctor->remark                 = $post['remark'];
+                $doctor->save();
+
+                /** TODO: Update doctor specialist table */
+                // TODO: to update doctor specialist
+
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Updating successfully',
+                            'doctor'    => $doctor
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                        ->withStatus(500)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 0,
+                            'message'   => 'Something went wrong!!'
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
                     ->withHeader("Content-Type", "application/json")
-                    ->write($data);
-        } else {
-            // Throw error exeption
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
         }
     }
 
     public function delete()
     {
-        $employee = Employee::find($args['id']);
+        try {
+            $employee = Employee::find($args['id']);
 
-        if ($employee->delete()) {
-            $doctor = Doctor::where('emp_id', $args['id'])->delete();
+            if ($employee->delete()) {
+                $doctor = Doctor::where('emp_id', $args['id'])->delete();
 
-            /** Update doctor specialist table */
+                /** Update doctor specialist table */
+                // TODO: to update doctor specialist
 
-            $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-
-            return $response->withStatus(200)
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully'
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                        ->withStatus(500)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 0,
+                            'message'   => 'Something went wrong!!'
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
                     ->withHeader("Content-Type", "application/json")
-                    ->write($data);
-        } else {
-            // Throw error exeption
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
         }
     }
 }

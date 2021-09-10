@@ -78,6 +78,8 @@ function uploadImage($img, $img_url)
 
 function thdateToDbdate($str)
 {
+    if (empty($str) || !isset($str)) return null;
+
     list($day, $month, $year)  = explode('/', $str);
 
     return ((int)$year - 543). '-' .$month. '-' .$day;
