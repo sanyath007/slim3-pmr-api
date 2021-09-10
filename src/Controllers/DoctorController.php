@@ -162,6 +162,20 @@ class DoctorController extends Controller
 
     public function delete()
     {
+        $employee = Employee::find($args['id']);
 
+        if ($employee->delete()) {
+            $doctor = Doctor::where('emp_id', $args['id'])->delete();
+
+            /** Update doctor specialist table */
+
+            $data = json_encode($doctor, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+            return $response->withStatus(200)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write($data);
+        } else {
+            // Throw error exeption
+        }
     }
 }
