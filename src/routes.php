@@ -13,7 +13,7 @@ $app->post('/login', 'LoginController:login')->setName('login');
 $app->group('/api', function(Slim\App $app) {
     $app->get('/users', 'UserController:getAll');
     $app->get('/users/{username}', 'UserController:getUser');
-    
+
     $app->get('/appointments', 'AppointmentController:getAll');
     $app->get('/appointments/{id}', 'AppointmentController:getById');
     $app->get('/appointments/{date}/count', 'AppointmentController:getCountByDate');
@@ -29,6 +29,9 @@ $app->group('/api', function(Slim\App $app) {
     $app->post('/admits', 'AdmitAppointmentController:store');
     $app->put('/admits/{id}', 'AdmitAppointmentController:update');
     $app->delete('/admits/{id}', 'AdmitAppointmentController:delete');
+    $app->put('/admits/{id}/admit', 'AdmitAppointmentController:admit');
+    $app->put('/admits/{id}/discharge', 'AdmitAppointmentController:discharge');
+    $app->put('/admits/{id}/cancel', 'AdmitAppointmentController:cancel');
 
     $app->get('/patients', 'PatientController:getAll');
     $app->get('/patients/{id}', 'PatientController:getById');

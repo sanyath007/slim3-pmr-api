@@ -217,7 +217,7 @@ class AdmitAppointmentController extends Controller
             $admit->admit_for       = $post['admit_for'];
             $admit->diag_text       = $post['diag_text'];
             $admit->admit_user      = $post['user'];
-            // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+            // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=Admit, 3=จำหน่าย, 9=ยกเลิกนัด
 
             if($admit->save()) {
                 /** สร้างไฟล์ใบนัด */
@@ -259,6 +259,114 @@ class AdmitAppointmentController extends Controller
             $admit = AdmitAppointment::find($args['id']);
 
             if ($admit->delete()) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function admit($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = AdmitAppointment::where('id', $args['id'])->update(['status' => 2]);
+
+            if ($admit > 0) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function discharge($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = AdmitAppointment::where('id', $args['id'])->update(['status' => 3]);
+
+            if ($admit > 0) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function cancel($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = AdmitAppointment::where('id', $args['id'])->update(['status' => 9]);
+
+            if ($admit > 0) {
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
