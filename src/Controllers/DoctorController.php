@@ -91,18 +91,18 @@ class DoctorController extends Controller
         $employee->fname            = $post['fname'];
         $employee->lname            = $post['lname'];
         $employee->sex              = $post['sex'];
-        $employee->birthdate        = $post['birthdate'];
+        $employee->birthdate        = thdateToDbdate($post['birthdate']);
         $employee->position         = $post['position'];
         $employee->position_class   = $post['position_class'];
         $employee->position_type    = $post['position_type'];
-        $employee->start_date       = $post['start_date'];
+        $employee->start_date       = thdateToDbdate($post['start_date']);
 
         if ($employee->save()) {
             $doctor = new Doctor;
             $doctor->emp_id                 = $employee->id;
             $doctor->title                  = $post['title'];
             $doctor->license_no             = $post['license_no'];
-            $doctor->license_renewal_date   = $post['license_renewal_date'];
+            $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
             $doctor->depart                 = $post['depart'];
             $doctor->remark                 = $post['remark'];
             $doctor->save();
@@ -133,17 +133,17 @@ class DoctorController extends Controller
         $employee->fname            = $post['fname'];
         $employee->lname            = $post['lname'];
         $employee->sex              = $post['sex'];
-        $employee->birthdate        = $post['birthdate'];
+        $employee->birthdate        = thdateToDbdate($post['birthdate']);
         $employee->position         = $post['position'];
         $employee->position_class   = $post['position_class'];
         $employee->position_type    = $post['position_type'];
-        $employee->start_date       = $post['start_date'];
+        $employee->start_date       = thdateToDbdate($post['start_date']);
 
         if ($employee->save()) {
             $doctor = Doctor::where('emp_id', $args['id']);
             $doctor->title                  = $post['title'];
             $doctor->license_no             = $post['license_no'];
-            $doctor->license_renewal_date   = $post['license_renewal_date'];
+            $doctor->license_renewal_date   = thdateToDbdate($post['license_renewal_date']);
             $doctor->depart                 = $post['depart'];
             $doctor->remark                 = $post['remark'];
             $doctor->save();
