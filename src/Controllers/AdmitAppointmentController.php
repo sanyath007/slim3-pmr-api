@@ -125,6 +125,7 @@ class AdmitAppointmentController extends Controller
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
                 $admit->admit_for       = $post['admit_for'];
+                $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
                 $admit->diag_text       = $post['diag_text'];
                 $admit->admit_user      = $post['user'];
                 $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
@@ -166,6 +167,7 @@ class AdmitAppointmentController extends Controller
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
                 $admit->admit_for       = $post['admit_for'];
+                $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
                 $admit->diag_text       = $post['diag_text'];
                 $admit->admit_user      = $post['user'];
                 $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
@@ -215,6 +217,7 @@ class AdmitAppointmentController extends Controller
             // $admit->room            = $post['room'];
             $admit->doctor          = $post['doctor'];
             $admit->admit_for       = $post['admit_for'];
+            $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
             $admit->diag_text       = $post['diag_text'];
             $admit->admit_user      = $post['user'];
             // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=Admit, 3=จำหน่าย, 9=ยกเลิกนัด
