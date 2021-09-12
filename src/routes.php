@@ -14,24 +14,16 @@ $app->group('/api', function(Slim\App $app) {
     $app->get('/users', 'UserController:getAll');
     $app->get('/users/{username}', 'UserController:getUser');
 
-    $app->get('/appointments', 'AppointmentController:getAll');
-    $app->get('/appointments/{id}', 'AppointmentController:getById');
-    $app->get('/appointments/{date}/count', 'AppointmentController:getCountByDate');
-    $app->get('/appointments/init/form', 'AppointmentController:getInitForm');
-    $app->post('/appointments', 'AppointmentController:store');
-    $app->put('/appointments/{id}', 'AppointmentController:update');
-    $app->delete('/appointments/{id}', 'AppointmentController:delete');
-
-    $app->get('/admits', 'AdmitAppointmentController:getAll');
-    $app->get('/admits/{id}', 'AdmitAppointmentController:getById');
-    $app->get('/admits/{date}/count', 'AdmitAppointmentController:getCountByDate');
-    $app->get('/admits/init/form', 'AdmitAppointmentController:getInitForm');
-    $app->post('/admits', 'AdmitAppointmentController:store');
-    $app->put('/admits/{id}', 'AdmitAppointmentController:update');
-    $app->delete('/admits/{id}', 'AdmitAppointmentController:delete');
-    $app->put('/admits/{id}/admit', 'AdmitAppointmentController:admit');
-    $app->put('/admits/{id}/discharge', 'AdmitAppointmentController:discharge');
-    $app->put('/admits/{id}/cancel', 'AdmitAppointmentController:cancel');
+    $app->get('/admits', 'AppointmentController:getAll');
+    $app->get('/admits/{id}', 'AppointmentController:getById');
+    $app->get('/admits/{date}/count', 'AppointmentController:getCountByDate');
+    $app->get('/admits/init/form', 'AppointmentController:getInitForm');
+    $app->post('/admits', 'AppointmentController:store');
+    $app->put('/admits/{id}', 'AppointmentController:update');
+    $app->delete('/admits/{id}', 'AppointmentController:delete');
+    $app->put('/admits/{id}/admit', 'AppointmentController:admit');
+    $app->put('/admits/{id}/discharge', 'AppointmentController:discharge');
+    $app->put('/admits/{id}/cancel', 'AppointmentController:cancel');
 
     $app->get('/patients', 'PatientController:getAll');
     $app->get('/patients/{id}', 'PatientController:getById');

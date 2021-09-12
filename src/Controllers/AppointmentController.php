@@ -9,9 +9,6 @@ use Ramsey\Uuid\Uuid;
 use App\Models\User;
 use App\Models\Patient;
 use App\Models\Appointment;
-use App\Models\Clinic;
-use App\Models\DiagGroup;
-use App\Models\ReferCause;
 use App\Models\Right;
 use App\Models\Doctor;
 use App\Models\Room;
@@ -23,12 +20,6 @@ class AppointmentController extends Controller
         $appointments = Appointment::with(['patient' => function($q) {
                             $q->select('id','hn','pname','fname','lname','cid','tel1');
                         }])
-                        ->with(['clinic' => function($q) {
-                            $q->select('id', 'clinic_name');
-                        }])
-                        ->with(['diag' => function($q) {
-                            $q->select('id', 'name');
-                        }])
                         ->with(['right' => function($q) {
                             $q->select('id', 'right_name');
                         }])
@@ -38,7 +29,7 @@ class AppointmentController extends Controller
                         ->with(['doctor.employee' => function($q) {
                             $q->select('id', 'prefix', 'fname', 'lname');
                         }])
-                        ->orderBy('appoint_date')
+                        ->orderBy('admdate')
                         ->get();
         $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -52,17 +43,14 @@ class AppointmentController extends Controller
         $appointment    = Appointment::with(['patient' => function($q) {
                                 $q->select('id','hn','pname','fname','lname','cid','tel1','sex','birthdate');
                             }])
-                            ->with(['clinic' => function($q) {
-                                $q->select('id', 'clinic_name');
-                            }])
-                            ->with(['diag' => function($q) {
-                                $q->select('id', 'name');
-                            }])
                             ->with(['right' => function($q) {
                                 $q->select('id', 'right_name');
                             }])
-                            ->with(['referCause' => function($q) {
-                                $q->select('id', 'name');
+                            ->with(['doctor' => function($q) {
+                                $q->select('emp_id', 'title', 'license_no');
+                            }])
+                            ->with(['doctor.employee' => function($q) {
+                                $q->select('id', 'prefix', 'fname', 'lname');
                             }])
                             ->where('id', $args['id'])
                             ->first();
@@ -91,12 +79,12 @@ class AppointmentController extends Controller
 
     public function getCountByDate($request, $response, $args)
     {
-        $sql = "SELECT appoint_date, COUNT(id) AS num
-                FROM appointments 
-                GROUP BY appoint_date 
-                ORDER BY appoint_date";
-        $appointments = DB::select($sql);
-        $data = json_encode($appointments, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        $sql = "SELECT admdate, COUNT(id) AS num
+                FROM admit_appointments 
+                GROUP BY admdate 
+                ORDER BY admdate";
+        $admits = DB::select($sql);
+        $data = json_encode($admits, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
@@ -106,9 +94,6 @@ class AppointmentController extends Controller
     public function getInitForm($request, $response, $args)
     {
         $data = json_encode([
-            'clinics'       => Clinic::all(),
-            'diagGroups'    => DiagGroup::all(),
-            'referCauses'   => ReferCause::all(),
             'rights'        => Right::all(),
             'doctors'       => Doctor::with('employee')->get(),
             'rooms'         => Room::all()
@@ -121,68 +106,46 @@ class AppointmentController extends Controller
 
     public function store($request, $response, $args)
     {
-        // $this->validator->validate($request, [
-        //     'patient_hn'    => v::numeric(),
-        //     'cid'           => v::numeric(),
-        //     'pname'         => v::numeric(),
-        //     'fname'         => v::numeric(),
-        //     'lname'         => v::numeric(),
-        //     'appoint_date'  => v::stringType()->notEmpty(),
-        //     'appoint_time'  => v::stringType()->notEmpty(),
-        //     'clinic_id'     => v::stringType()->notEmpty(),
-        //     'diag_group'    => v::stringType()->notEmpty(),
-        //     'refer_no'      => v::stringType()->notEmpty(),
-        //     'refer_cause'   => v::stringType()->notEmpty(),
-        // ]);
-
-        // if ($this->validator->failed()) {
-        //     return $response
-        //                 ->withStatus(200)
-        //                 ->withHeader("Content-Type", "application/json")
-        //                 ->write(json_encode([
-        //                     'status' => 0,
-        //                     'message' => 'Data Invalid !!',
-        //                     'errors' => $this->validator->getMessages()
-        //                 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
-        // }
-
-        // TODO: should check duplicated patient data before store to db
         try {
             $post = (array)$request->getParsedBody();
 
-            if (!empty($post['patient_id'])) {
-                $appointment = new Appointment;
-                $appointment->patient       = $post['patient_id'];
-                $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-                $appointment->appoint_time  = $post['appoint_time'];
-                $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic        = $post['clinic'];
-                $appointment->doctor        = $post['doctor'];
-                $appointment->diag_group    = $post['diag_group'];
-                $appointment->diag_text     = $post['diag_text'];
-                $appointment->refer_no      = $post['refer_no'];
-                $appointment->refer_cause   = $post['refer_cause'];
-                $appointment->hospcode      = $post['hospcode'];
-                $appointment->appoint_user  = $post['user'];
-                $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
-                $appointment->save();
+            // TODO: should check duplicated patient data before store to db
+            $patient = Patient::where('hn', $post['hn'])
+                        ->when(!empty($post['cid']), function($q) use ($post) {
+                            $q->orWhere('cid', $post['cid']);    
+                        })
+                        ->first();
+
+            if ($patient) {
+                $admit = new Appointment;
+                $admit->patient         = $patient->id;
+                $admit->patient_right   = $post['patient_right'];
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->dchdate         = thdateToDbdate($post['dchdate']);
+                // $admit->room            = $post['room'];
+                $admit->doctor          = $post['doctor'];
+                $admit->admit_for       = $post['admit_for'];
+                $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
+                $admit->diag_text       = $post['diag_text'];
+                $admit->admit_user      = $post['user'];
+                $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+                $admit->save();
 
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status' => 1,
-                            'message' => 'Inserting successfully',
-                            'appointment' => $appointment
+                            'status'    => 1,
+                            'message'   => 'Inserting successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             }
 
             $patient = new Patient;
-            $patient->hn            = $post['patient_hn'];
+            $patient->hn            = $post['hn'];
             $patient->cid           = $post['cid'];
             $patient->passport      = $post['passport'];
             $patient->pname         = $post['pname'];
@@ -196,33 +159,30 @@ class AppointmentController extends Controller
             $patient->main_right    = $post['patient_right'];
             
             if($patient->save()) {
-                $appointment = new Appointment;
-                $appointment->patient       = $patient->id;
-                $appointment->patient_right = $post['patient_right'];
-                $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-                $appointment->appoint_time  = $post['appoint_time'];
-                $appointment->appoint_type  = $post['appoint_type'];
-                $appointment->clinic        = $post['clinic'];
-                $appointment->doctor        = $post['doctor'];
-                $appointment->diag_group    = $post['diag_group'];
-                $appointment->diag_text     = $post['diag_text'];
-                $appointment->refer_no      = $post['refer_no'];
-                $appointment->refer_cause   = $post['refer_cause'];
-                $appointment->hospcode      = $post['hospcode'];
-                $appointment->appoint_user  = $post['user'];
-                $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
-                $appointment->save();
+                $admit = new Appointment;
+                $admit->patient         = $patient->id;
+                $admit->patient_right   = $post['patient_right'];
+                $admit->admdate         = thdateToDbdate($post['admdate']);
+                $admit->dchdate         = thdateToDbdate($post['dchdate']);
+                // $admit->room            = $post['room'];
+                $admit->doctor          = $post['doctor'];
+                $admit->admit_for       = $post['admit_for'];
+                $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
+                $admit->diag_text       = $post['diag_text'];
+                $admit->admit_user      = $post['user'];
+                $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+                $admit->save();
 
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status' => 1,
-                            'message' => 'Inserting successfully',
-                            'appointment' => $appointment
+                            'status'    => 1,
+                            'message'   => 'Inserting successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             } else {
                 return $response
@@ -249,33 +209,174 @@ class AppointmentController extends Controller
         try {
             $post = (array)$request->getParsedBody();
 
-            $appointment = Appointment::find($args['id']);
-            $appointment->patient       = $post['patient_id'];
-            $appointment->patient_right = $post['patient_right'];
-            $appointment->appoint_date  = thdateToDbdate($post['appoint_date']);
-            $appointment->appoint_time  = $post['appoint_time'];
-            $appointment->appoint_type  = $post['appoint_type'];
-            $appointment->clinic        = $post['clinic'];
-            $appointment->doctor        = $post['doctor'];
-            $appointment->diag_group    = $post['diag_group'];
-            $appointment->diag_text     = $post['diag_text'];
-            $appointment->refer_no      = $post['refer_no'];
-            $appointment->refer_cause   = $post['refer_cause'];
-            // $appointment->hospcode      = $post['hospcode'];
-            $appointment->appoint_user  = $post['user'];
-            // $appointment->status        = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
+            $admit = Appointment::find($args['id']);
+            $admit->patient         = $post['patient_id'];
+            $admit->patient_right   = $post['patient_right'];
+            $admit->admdate         = thdateToDbdate($post['admdate']);
+            $admit->dchdate         = thdateToDbdate($post['dchdate']);
+            // $admit->room            = $post['room'];
+            $admit->doctor          = $post['doctor'];
+            $admit->admit_for       = $post['admit_for'];
+            $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
+            $admit->diag_text       = $post['diag_text'];
+            $admit->admit_user      = $post['user'];
+            // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=Admit, 3=จำหน่าย, 9=ยกเลิกนัด
 
-            if($appointment->save()) {
+            if($admit->save()) {
                 /** สร้างไฟล์ใบนัด */
-                $this->createAppointForm($appointment->id);
+                // $this->createAppointForm($admit->id);
 
                 return $response
                         ->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode([
-                            'status'        => 1,
-                            'message'       => 'Updating successfully',
-                            'appointment'   => $appointment
+                            'status'    => 1,
+                            'message'   => 'Updating successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function delete($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = Appointment::find($args['id']);
+
+            if ($admit->delete()) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function admit($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = Appointment::where('id', $args['id'])->update(['status' => 2]);
+
+            if ($admit > 0) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function discharge($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = Appointment::where('id', $args['id'])->update(['status' => 3]);
+
+            if ($admit > 0) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
+                        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            } else {
+                return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => 'Something went wrong!!'
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+            }
+        } catch (\Exception $ex) {
+            return $response
+                    ->withStatus(500)
+                    ->withHeader("Content-Type", "application/json")
+                    ->write(json_encode([
+                        'status'    => 0,
+                        'message'   => $ex->getMessage()
+                    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    public function cancel($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $admit = Appointment::where('id', $args['id'])->update(['status' => 9]);
+
+            if ($admit > 0) {
+                return $response
+                        ->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write(json_encode([
+                            'status'    => 1,
+                            'message'   => 'Deleting successfully',
+                            'admit'     => $admit
                         ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE));
             } else {
                 return $response

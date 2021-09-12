@@ -129,10 +129,6 @@ $container['DashboardController'] = function($c) {
     return new App\Controllers\DashboardController($c);
 };
 
-$container['AdmitAppointmentController'] = function($c) {
-    return new App\Controllers\AdmitAppointmentController($c);
-};
-
 /** 
  * ============================================================
  * JWT middleware

@@ -13,9 +13,14 @@ class Appointment extends Model
         return $this->belongsTo(Patient::class, 'patient', 'id');
     }
 
-    public function clinic()
+    // public function clinic()
+    // {
+    //     return $this->belongsTo(Clinic::class, 'clinic', 'id');
+    // }
+
+    public function room()
     {
-        return $this->belongsTo(Clinic::class, 'clinic', 'id');
+        return $this->belongsTo(Room::class, 'room', 'id');
     }
 
     public function doctor()
@@ -23,15 +28,15 @@ class Appointment extends Model
         return $this->belongsTo(Doctor::class, 'doctor', 'emp_id');
     }
 
-    public function diag()
-    {
-        return $this->belongsTo(DiagGroup::class, 'diag_group', 'id');
-    }
+    // public function diag()
+    // {
+    //     return $this->belongsTo(DiagGroup::class, 'diag_group', 'id');
+    // }
 
-    public function referCause()
-    {
-        return $this->belongsTo(ReferCause::class, 'refer_cause', 'id');
-    }
+    // public function admitFor()
+    // {
+    //     return $this->belongsTo(ReferCause::class, 'refer_cause', 'id');
+    // }
 
     public function right()
     {
@@ -41,10 +46,5 @@ class Appointment extends Model
     public function patients()
     {
         return $this->hasMany(Patient::class, 'hn', 'patient_hn');
-    }
-
-    public function hosp()
-    {
-        return $this->belongsTo(Hospcode::class, 'hospcode', 'hospcode');
     }
 }

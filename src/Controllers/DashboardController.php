@@ -16,11 +16,11 @@ class DashboardController extends Controller
                 COUNT(case when (patient in (
                     select id from patients where date(created_at) between ? and ?)
                 ) then id end) as newcase
-                FROM admit_appointments
+                FROM appointments
                 WHERE (admdate between ? and ?) ";
         
         $sqlMax = "SELECT admdate, COUNT(id) as amt
-                FROM admit_appointments
+                FROM appointments
                 WHERE (admdate between ? and ?)
                 GROUP BY admdate
                 ORDER BY count(id) desc LIMIT 1;";
@@ -37,7 +37,7 @@ class DashboardController extends Controller
         $edate = $args['month']. '-31';
 
         $sql="SELECT CAST(DAY(admdate) AS SIGNED) AS d, COUNT(DISTINCT id) as amt
-                FROM admit_appointments WHERE (admdate between ? and ?)
+                FROM appointments WHERE (admdate between ? and ?)
                 GROUP BY CAST(DAY(admdate) AS SIGNED) 
                 ORDER BY CAST(DAY(admdate) AS SIGNED);";
 
