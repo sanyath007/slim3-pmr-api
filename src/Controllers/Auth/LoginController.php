@@ -12,6 +12,7 @@ class LoginController extends Controller
     public function login($req, $res, $args)
     {
         $params = $req->getParsedBody() ? : [];
+        // echo password_hash($params['password'], PASSWORD_BCRYPT); // Generate hashed password
 
         if($this->auth->attempt($params['username'], $params['password'])) {
             $now = new \DateTime();
