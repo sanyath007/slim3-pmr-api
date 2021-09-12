@@ -76,11 +76,10 @@ class HPatientController extends Controller
         // for($ii=1; $ii<=count($arrYear); $ii++){
         //     $M[$ii] = $arrYear[$ii-1];
         // }
-
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
+        
         try {
             $cid = (int)$args['cid'];
+
             $sql = "SELECT top (1) bh.useDrg,ph.pay_typedes,
 			CAST(CAST(substring(bh.rigthDate, 1, 4) AS int) - 543 AS varchar(4)) + '-' + substring(bh.rigthDate, 5, 2) + '-' + substring(bh.rigthDate, 7, 2) AS rigthDateNew,
 			ltrim(rtrim(pt.hn)) AS hn,

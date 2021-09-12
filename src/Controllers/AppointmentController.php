@@ -80,7 +80,7 @@ class AppointmentController extends Controller
     public function getCountByDate($request, $response, $args)
     {
         $sql = "SELECT admdate, COUNT(id) AS num
-                FROM admit_appointments 
+                FROM appointments 
                 GROUP BY admdate 
                 ORDER BY admdate";
         $admits = DB::select($sql);

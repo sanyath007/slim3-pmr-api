@@ -41,7 +41,10 @@ $container['pdo'] = function ($c) {
     try {
         $conStr = $c['settings']['homc_db'];
 
-        return new PDO($conStr['driver']. ":Server=" .$conStr['host']. ";Database=" .$conStr['database'], $conStr['username'], $conStr['password']);
+        $pdo = new PDO($conStr['driver']. ":Server=" .$conStr['host']. ";Database=" .$conStr['database'], $conStr['username'], $conStr['password']);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
     catch(\Exception $ex) {
         return $ex->getMessage();
