@@ -123,7 +123,7 @@ class AppointmentController extends Controller
                 $admit->admdate         = thdateToDbdate($post['admdate']);
                 $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
-                $admit->doctor          = $post['doctor'];
+                $admit->doctor_id       = $post['doctor_id'];
                 $admit->doctor_text     = $post['doctor_text'];
                 $admit->admit_for       = $post['admit_for'];
                 $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
@@ -167,7 +167,7 @@ class AppointmentController extends Controller
                 $admit->admdate         = thdateToDbdate($post['admdate']);
                 $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
-                $admit->doctor          = $post['doctor'];
+                $admit->doctor_id       = $post['doctor_id'];
                 $admit->doctor_text     = $post['doctor_text'];
                 $admit->admit_for       = $post['admit_for'];
                 $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
@@ -219,7 +219,7 @@ class AppointmentController extends Controller
             $admit->admdate         = thdateToDbdate($post['admdate']);
             $admit->dchdate         = thdateToDbdate($post['dchdate']);
             // $admit->room            = $post['room'];
-            $admit->doctor          = $post['doctor'];
+            $admit->doctor_id       = $post['doctor_id'];
             $admit->doctor_text     = $post['doctor_text'];
             $admit->admit_for       = $post['admit_for'];
             $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
