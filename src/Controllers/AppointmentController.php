@@ -124,9 +124,11 @@ class AppointmentController extends Controller
                 $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
+                $admit->doctor_text     = $post['doctor_text'];
                 $admit->admit_for       = $post['admit_for'];
                 $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
                 $admit->diag_text       = $post['diag_text'];
+                $admit->appoint_user    = $post['appoint_user']; // 1=อาจารย์แพทย์,2=แพทย์ประจำบ้าน,3=พยาบาล OPD,4=พยาบาล Ward
                 $admit->admit_user      = $post['user'];
                 $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
                 $admit->save();
@@ -166,9 +168,11 @@ class AppointmentController extends Controller
                 $admit->dchdate         = thdateToDbdate($post['dchdate']);
                 // $admit->room            = $post['room'];
                 $admit->doctor          = $post['doctor'];
+                $admit->doctor_text     = $post['doctor_text'];
                 $admit->admit_for       = $post['admit_for'];
                 $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
                 $admit->diag_text       = $post['diag_text'];
+                $admit->appoint_user    = $post['appoint_user']; // 1=อาจารย์แพทย์,2=แพทย์ประจำบ้าน,3=พยาบาล OPD,4=พยาบาล Ward
                 $admit->admit_user      = $post['user'];
                 $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=ตรวจแล้ว, 3=ยกเลิกนัด
                 $admit->save();
@@ -216,9 +220,11 @@ class AppointmentController extends Controller
             $admit->dchdate         = thdateToDbdate($post['dchdate']);
             // $admit->room            = $post['room'];
             $admit->doctor          = $post['doctor'];
+            $admit->doctor_text     = $post['doctor_text'];
             $admit->admit_for       = $post['admit_for'];
             $admit->case_from       = $post['case_from']; // 1=OPD, 2=IPD
             $admit->diag_text       = $post['diag_text'];
+            $admit->appoint_user    = $post['appoint_user']; // 1=อาจารย์แพทย์,2=แพทย์ประจำบ้าน,3=พยาบาล OPD,4=พยาบาล Ward
             $admit->admit_user      = $post['user'];
             // $admit->status          = 0; // 0=รอดำเนินการ, 1=ตอบรับแล้ว, 2=Admit, 3=จำหน่าย, 9=ยกเลิกนัด
 
