@@ -13,6 +13,10 @@ $app->post('/login', 'LoginController:login')->setName('login');
 $app->group('/api', function(Slim\App $app) {
     $app->get('/users', 'UserController:getAll');
     $app->get('/users/{username}', 'UserController:getUser');
+    $app->get('/users/init/form', 'UserController:getInitForm');
+    $app->post('/users', 'UserController:store');
+    $app->put('/users/{id}', 'UserController:update');
+    $app->delete('/users/{id}', 'UserController:delete');
 
     $app->get('/admits', 'AppointmentController:getAll');
     $app->get('/admits/{id}', 'AppointmentController:getById');

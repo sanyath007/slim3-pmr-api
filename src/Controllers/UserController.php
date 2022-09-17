@@ -5,6 +5,9 @@ namespace App\Controllers;
 use App\Controllers\Controller;
 use Illuminate\Database\Capsule\Manager as DB;
 use App\Models\User;
+use App\Models\UserPermission;
+use App\Models\PermissionRole;
+use App\Models\Position;
 
 class UserController extends Controller
 {
@@ -18,7 +21,7 @@ class UserController extends Controller
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
     }
-    
+
     public function getUser($request, $response, $args)
     {
         $user = User::where('username', $args['username'])
@@ -30,5 +33,96 @@ class UserController extends Controller
         return $response->withStatus(200)
                 ->withHeader("Content-Type", "application/json")
                 ->write($data);
+    }
+
+    public function getInitForm($request, $response, $args)
+    {
+        $data = json_encode([
+            'positions' => Position::all(),
+            'roles'     => PermissionRole::all()
+        ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+
+        return $response->withStatus(200)
+                ->withHeader("Content-Type", "application/json")
+                ->write($data);
+    }
+
+    public function store($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $user = new User;
+            $user->fullname     = $post['fullname'];
+            $user->email        = $post['email'];
+            $user->username     = $post['username'];
+            $user->password     = $post['password'];
+            $user->hospcode     = $post['hospcode'];
+            $user->position_id  = $post['position_id'];
+            $user->avatar_url   = $post['avatar'];
+
+            if ($user->save()) {
+                $permission = new UserPermission;
+                $permission->user_id    = $user->id;
+                $permission->role       = $post['role_id'];
+                $permission->save();
+
+                $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        
+                return $response->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write($data);
+            }
+        } catch (\Exception $ex) {
+            //throw $ex;
+        }
+    }
+
+    public function update($request, $response, $args)
+    {
+        try {
+            $post = (array)$request->getParsedBody();
+
+            $user = User::find($args['id']);
+            $user->fullname     = $post['fullname'];
+            $user->email        = $post['email'];
+            $user->username     = $post['username'];
+            $user->password     = $post['password'];
+            $user->hospcode     = $post['hospcode'];
+            $user->position_id  = $post['position_id'];
+            $user->avatar_url   = $post['avatar'];
+
+            if ($user->save()) {
+                $permission = UserPermission::where('user_id', $args['id'])->first();
+                $permission->user_id    = $user->id;
+                $permission->role       = $post['role_id'];
+                $permission->save();
+
+                $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        
+                return $response->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write($data);
+            }
+        } catch (\Exception $ex) {
+            //throw $ex;
+        }
+    }
+
+    public function delete($request, $response, $args)
+    {
+        try {
+            $user = User::find($args['id']);
+
+            if ($user->delete()) {
+                $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        
+                return $response->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write($data);
+            }
+        } catch (\Exception $ex) {
+            //throw $ex;
+        }
     }
 }
