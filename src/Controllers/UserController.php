@@ -51,6 +51,7 @@ class UserController extends Controller
     {
         try {
             $post = (array)$request->getParsedBody();
+            $uploadedFiles = $request->getUploadedFiles();
 
             $user = new User;
             $user->fullname     = $post['fullname'];
@@ -59,22 +60,27 @@ class UserController extends Controller
             $user->password     = $post['password'];
             $user->hospcode     = $post['hospcode'];
             $user->position_id  = $post['position_id'];
-            $user->avatar_url   = $post['avatar'];
 
-            if ($user->save()) {
-                $permission = new UserPermission;
-                $permission->user_id    = $user->id;
-                $permission->role       = $post['role_id'];
-                $permission->save();
-
-                $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-        
-                return $response->withStatus(200)
-                        ->withHeader("Content-Type", "application/json")
-                        ->write($data);
+            /** Upload avatar's image */
+            $uploadDir = APP_ROOT_DIR . '/public/assets/img';
+            foreach($uploadedFiles as $file) {
+                $user->avatar_url   = moveUploadedFile($uploadDir, $file);
             }
+
+            // if ($user->save()) {
+            //     $permission = new UserPermission;
+            //     $permission->user_id    = $user->id;
+            //     $permission->role       = $post['role_id'];
+            //     $permission->save();
+
+            //     $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+        
+            //     return $response->withStatus(200)
+            //             ->withHeader("Content-Type", "application/json")
+            //             ->write($data);
+            // }
         } catch (\Exception $ex) {
-            //throw $ex;
+            throw $ex;
         }
     }
 
