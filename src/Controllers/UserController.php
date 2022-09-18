@@ -86,7 +86,6 @@ class UserController extends Controller
     {
         try {
             $post = (array)$request->getParsedBody();
-            $uploadedFiles = $request->getUploadedFiles();
 
             $user = User::find($args['id']);
             $user->fullname     = $post['fullname'];
@@ -94,16 +93,9 @@ class UserController extends Controller
             $user->hospcode     = $post['hospcode'];
             $user->position_id  = $post['position_id'];
 
-            /** Upload avatar's image */
-            $uploadDir = APP_ROOT_DIR . '/public/uploads/avatars';
-            foreach($uploadedFiles as $file) {
-                $user->avatar   = moveUploadedFile($uploadDir, $file);
-            }
-
             if ($user->save()) {
                 $permission = UserPermission::where('user_id', $args['id'])->first();
-                $permission->user_id    = $user->id;
-                $permission->role       = $post['role_id'];
+                $permission->role = $post['role_id'];
                 $permission->save();
 
                 $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
