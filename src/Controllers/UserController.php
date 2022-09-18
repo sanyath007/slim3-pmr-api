@@ -13,7 +13,7 @@ class UserController extends Controller
 {
     public function getAll($request, $response, $args)
     {
-        $users = User::all(['username', 'email', 'fullname', 'hospcode', 'position']);
+        $users = User::with('position', 'permissions', 'permissions.role')->get();
         
         $data = json_encode($users, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -24,9 +24,7 @@ class UserController extends Controller
 
     public function getUser($request, $response, $args)
     {
-        $user = User::where('username', $args['username'])
-                    ->get(['username', 'name', 'hospcode', 'position'])
-                    ->first();
+        $user = User::find($args['id']);
                     
         $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 

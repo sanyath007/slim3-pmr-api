@@ -8,6 +8,10 @@ class User extends Model
 {
     protected $table = "users";
 
+    protected $hidden = [
+        'password',
+    ];
+
     public function permissions()
     {
         return $this->hasMany(UserPermission::class, 'user_id', 'id');
