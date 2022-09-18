@@ -22,9 +22,9 @@ class UserController extends Controller
                 ->write($data);
     }
 
-    public function getUser($request, $response, $args)
+    public function getById($request, $response, $args)
     {
-        $user = User::find($args['id']);
+        $user = User::with('position', 'permissions', 'permissions.role')->find($args['id']);
                     
         $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
 
@@ -60,9 +60,9 @@ class UserController extends Controller
             $user->position_id  = $post['position_id'];
 
             /** Upload avatar's image */
-            $uploadDir = APP_ROOT_DIR . '/public/assets/img';
+            $uploadDir = APP_ROOT_DIR . '/public/uploads/avatars';
             foreach($uploadedFiles as $file) {
-                $user->avatar_url   = moveUploadedFile($uploadDir, $file);
+                $user->avatar   = moveUploadedFile($uploadDir, $file);
             }
 
             if ($user->save()) {
@@ -86,15 +86,19 @@ class UserController extends Controller
     {
         try {
             $post = (array)$request->getParsedBody();
+            $uploadedFiles = $request->getUploadedFiles();
 
             $user = User::find($args['id']);
             $user->fullname     = $post['fullname'];
             $user->email        = $post['email'];
-            $user->username     = $post['username'];
-            $user->password     = $post['password'];
             $user->hospcode     = $post['hospcode'];
             $user->position_id  = $post['position_id'];
-            $user->avatar_url   = $post['avatar'];
+
+            /** Upload avatar's image */
+            $uploadDir = APP_ROOT_DIR . '/public/uploads/avatars';
+            foreach($uploadedFiles as $file) {
+                $user->avatar   = moveUploadedFile($uploadDir, $file);
+            }
 
             if ($user->save()) {
                 $permission = UserPermission::where('user_id', $args['id'])->first();
@@ -103,7 +107,7 @@ class UserController extends Controller
                 $permission->save();
 
                 $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-        
+
                 return $response->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write($data);

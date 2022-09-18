@@ -40,7 +40,7 @@ class LoginController extends Controller
                     'fullname'      => $user->fullname,
                     'position'      => $user->position,
                     'hospcode'      => $user->hospcode,
-                    'avatar'        => $user->avatar_url,
+                    'avatar'        => $user->avatar,
                     'permissions'   => count($user->permissions) > 0 ? $user->permissions[0] : null,
                 ]
             ];
