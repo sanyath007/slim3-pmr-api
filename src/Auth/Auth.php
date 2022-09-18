@@ -28,7 +28,7 @@ class Auth
     public function getUser()
     {
         if($this->user) {
-            return User::with('permissions', 'permissions.role')
+            return User::with('position', 'permissions', 'permissions.role')
                     ->where('id', $this->user->id)
                     ->first();
         }

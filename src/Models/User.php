@@ -12,4 +12,9 @@ class User extends Model
     {
         return $this->hasMany(UserPermission::class, 'user_id', 'id');
     }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class, 'position_id', 'id');
+    }
 }
