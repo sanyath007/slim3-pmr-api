@@ -55,7 +55,7 @@ class UserController extends Controller
             $user->fullname     = $post['fullname'];
             $user->email        = $post['email'];
             $user->username     = $post['username'];
-            $user->password     = $post['password'];
+            $user->password     = password_hash($post['password'], PASSWORD_BCRYPT, ['cost' => 12]);
             $user->hospcode     = $post['hospcode'];
             $user->position_id  = $post['position_id'];
 
@@ -65,18 +65,18 @@ class UserController extends Controller
                 $user->avatar_url   = moveUploadedFile($uploadDir, $file);
             }
 
-            // if ($user->save()) {
-            //     $permission = new UserPermission;
-            //     $permission->user_id    = $user->id;
-            //     $permission->role       = $post['role_id'];
-            //     $permission->save();
+            if ($user->save()) {
+                $permission = new UserPermission;
+                $permission->user_id    = $user->id;
+                $permission->role       = $post['role_id'];
+                $permission->save();
 
-            //     $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
+                $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
         
-            //     return $response->withStatus(200)
-            //             ->withHeader("Content-Type", "application/json")
-            //             ->write($data);
-            // }
+                return $response->withStatus(200)
+                        ->withHeader("Content-Type", "application/json")
+                        ->write($data);
+            }
         } catch (\Exception $ex) {
             throw $ex;
         }
