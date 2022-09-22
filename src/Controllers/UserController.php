@@ -72,7 +72,7 @@ class UserController extends Controller
                 $permission->save();
 
                 $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-        
+
                 return $response->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write($data);
@@ -116,7 +116,7 @@ class UserController extends Controller
 
             if ($user->delete()) {
                 $data = json_encode($user, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT |  JSON_UNESCAPED_UNICODE);
-        
+
                 return $response->withStatus(200)
                         ->withHeader("Content-Type", "application/json")
                         ->write($data);
